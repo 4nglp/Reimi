@@ -1,0 +1,210 @@
+{
+  "result": "ok",
+  "response": "entity",
+  "data": {
+    "id": "4ee5e960-6329-4e1d-b038-93e8e0d53589",
+    "type": "manga",
+    "attributes": {
+      "title": { "en": "Tomorrow\u0027s Joe" },
+      "altTitles": [
+        { "it": "Rocky Joe" },
+        { "vi": "Thi\u1ebft Quy\u1ec1n L\u00e3ng T\u1eed" },
+        {
+          "ru": "\u0417\u0430\u0432\u0442\u0440\u0430\u0448\u043d\u0438\u0439 \u0414\u0436\u043e"
+        },
+        { "ar": "\u062c\u0648 \u0627\u0644\u0628\u0637\u0644" },
+        { "ja": "\u3042\u3057\u305f\u306e\u30b8\u30e7\u30fc" },
+        { "zh": "\u5c0f\u62f3\u738b" },
+        { "zh": "\u660e\u65e5\u4e4b\u4e08" },
+        { "zh": "\u660e\u65e5\u7684\u4e08" },
+        { "ja-ro": "Ashita no Joe" },
+        { "es": "Joe del Ma\u00f1ana" },
+        { "it": "Joe del domani" },
+        { "fr": "Le Joe de demain" },
+        { "ko": "\ub0b4\uc77c\uc758 \uc8e0" },
+        {
+          "th": "\u0e42\u0e08 \u0e2a\u0e34\u0e07\u0e2b\u0e4c\u0e2a\u0e31\u0e07\u0e40\u0e27\u0e35\u0e22\u0e19"
+        },
+        { "sv": "Morgondagens Joe" },
+        {
+          "kk": "\u0415\u0440\u0442\u0435\u04a3\u0433\u0456 \u0414\u0436\u043e"
+        },
+        { "id": "Boy Action II" },
+        { "en": "Ashita no Joe: Fighting for Tomorrow" }
+      ],
+      "description": {
+        "en": "Joe Yabuki is a young man living in the slums of Tokyo. But, one day he meets Danpei Tange, a former boxer, who discovers his potential in boxing and tries to make him into a champion. Due to petty crimes, Joe is sent to a juvenile prison. There Joe mets Toru Rikiishi, a promising boxer, who knocked him out with one blow when he attempted to escape prison. Slowly but surely, Joe realizes his own potential. Joe begins his boxing life, step by step, with only one goal in mind\u2026 To Defeat Toru Rikiishi !!\n\nLicensed in English by Kodansha USA under the title Ashita no Joe: Fighting for Tomorrow."
+      },
+      "isLocked": false,
+      "links": {
+        "al": "31303",
+        "ap": "ashita-no-joe",
+        "bw": "series/4234/list",
+        "kt": "2843",
+        "mu": "835",
+        "amz": "https://www.amazon.co.jp/dp/B074CL6Q3S",
+        "cdj": "https://www.cdjapan.co.jp/product/NEOBK-1761947?s_ssid=e333fa62ba5960f762",
+        "ebj": "https://ebookjapan.yahoo.co.jp/books/103079/",
+        "mal": "1303"
+      },
+      "originalLanguage": "ja",
+      "lastVolume": "20",
+      "lastChapter": "111",
+      "publicationDemographic": "shounen",
+      "status": "completed",
+      "year": 1968,
+      "contentRating": "safe",
+      "tags": [
+        {
+          "id": "07251805-a27e-4d59-b488-f0bfbec15168",
+          "type": "tag",
+          "attributes": {
+            "name": { "en": "Thriller" },
+            "description": {},
+            "group": "genre",
+            "version": 1
+          },
+          "relationships": []
+        },
+        {
+          "id": "391b0423-d847-456f-aff0-8b0cfc03066b",
+          "type": "tag",
+          "attributes": {
+            "name": { "en": "Action" },
+            "description": {},
+            "group": "genre",
+            "version": 1
+          },
+          "relationships": []
+        },
+        {
+          "id": "3b60b75c-a2d7-4860-ab56-05f391bb889c",
+          "type": "tag",
+          "attributes": {
+            "name": { "en": "Psychological" },
+            "description": {},
+            "group": "genre",
+            "version": 1
+          },
+          "relationships": []
+        },
+        {
+          "id": "4d32cc48-9f00-4cca-9b5a-a839f0764984",
+          "type": "tag",
+          "attributes": {
+            "name": { "en": "Comedy" },
+            "description": {},
+            "group": "genre",
+            "version": 1
+          },
+          "relationships": []
+        },
+        {
+          "id": "5ca48985-9a9d-4bd8-be29-80dc0303db72",
+          "type": "tag",
+          "attributes": {
+            "name": { "en": "Crime" },
+            "description": {},
+            "group": "genre",
+            "version": 1
+          },
+          "relationships": []
+        },
+        {
+          "id": "69964a64-2f90-4d33-beeb-f3ed2875eb4c",
+          "type": "tag",
+          "attributes": {
+            "name": { "en": "Sports" },
+            "description": {},
+            "group": "genre",
+            "version": 1
+          },
+          "relationships": []
+        },
+        {
+          "id": "87cc87cd-a395-47af-b27a-93258283bbc6",
+          "type": "tag",
+          "attributes": {
+            "name": { "en": "Adventure" },
+            "description": {},
+            "group": "genre",
+            "version": 1
+          },
+          "relationships": []
+        },
+        {
+          "id": "b9af3a63-f058-46de-a9a0-e0c13906197a",
+          "type": "tag",
+          "attributes": {
+            "name": { "en": "Drama" },
+            "description": {},
+            "group": "genre",
+            "version": 1
+          },
+          "relationships": []
+        },
+        {
+          "id": "da2d50ca-3018-4cc0-ac7a-6b7d472a29ea",
+          "type": "tag",
+          "attributes": {
+            "name": { "en": "Delinquents" },
+            "description": {},
+            "group": "theme",
+            "version": 1
+          },
+          "relationships": []
+        },
+        {
+          "id": "df33b754-73a3-4c54-80e6-1a74a8058539",
+          "type": "tag",
+          "attributes": {
+            "name": { "en": "Police" },
+            "description": {},
+            "group": "theme",
+            "version": 1
+          },
+          "relationships": []
+        },
+        {
+          "id": "e5301a23-ebd9-49dd-a0cb-2add944c7fe9",
+          "type": "tag",
+          "attributes": {
+            "name": { "en": "Slice of Life" },
+            "description": {},
+            "group": "genre",
+            "version": 1
+          },
+          "relationships": []
+        },
+        {
+          "id": "f8f62932-27da-4fe4-8ee1-6779a8c5edba",
+          "type": "tag",
+          "attributes": {
+            "name": { "en": "Tragedy" },
+            "description": {},
+            "group": "genre",
+            "version": 1
+          },
+          "relationships": []
+        }
+      ],
+      "state": "published",
+      "chapterNumbersResetOnNewVolume": false,
+      "createdAt": "2018-04-02T02:17:28+00:00",
+      "updatedAt": "2024-07-17T04:58:25+00:00",
+      "version": 24,
+      "availableTranslatedLanguages": ["en", "pt-br", "vi", "hu"],
+      "latestUploadedChapter": "0516aa9e-dc85-47cc-a321-403c0ab4d46a"
+    },
+    "relationships": [
+      { "id": "2b538e85-7a71-4e09-b0b6-060f60d6a39a", "type": "author" },
+      { "id": "bb386677-86cf-43ee-bc3d-28f3bb4bdf4e", "type": "artist" },
+      { "id": "85cb62cd-4471-4fe2-97aa-895bf9c71040", "type": "cover_art" },
+      {
+        "id": "7b3d7030-9710-4347-87d0-2954b7115d54",
+        "type": "manga",
+        "related": "spin_off"
+      }
+    ]
+  }
+}
