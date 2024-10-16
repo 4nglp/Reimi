@@ -27,7 +27,7 @@ const Nav = () => {
             height={30}
             className="object-contain"
           />
-          <p>Akemi</p>
+          <p>Reimi</p>
         </Link>
         <Link href="/library">Library</Link>
         <Link href="/manga">Browse</Link>

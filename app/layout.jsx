@@ -2,8 +2,8 @@ import "@styles/globals.css";
 import Nav from "@components/Nav";
 
 export const metadata = {
-  title: "allin",
-  description: "ALL IN!",
+  title: "Reimi",
+  description: "Manga reader app",
 };
 
 const RootLayout = ({ children }) => {
