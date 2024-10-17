@@ -20,7 +20,6 @@ const GetMangaList = () => {
             );
 
             if (coverRelationship) {
-              // Fetch the cover details using the cover art ID
               const coverRes = await fetch(
                 `https://api.mangadex.org/cover/${coverRelationship.id}`
               );
@@ -32,7 +31,7 @@ const GetMangaList = () => {
               };
             }
 
-            return manga; // Return the manga without cover if not found
+            return manga;
           })
         );
 
@@ -50,30 +49,37 @@ const GetMangaList = () => {
   if (loading) return <h1>Loading...</h1>;
 
   return (
-    <>
-      <ul className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 pt-20">
-        {mangaList && mangaList.length > 0 ? (
-          mangaList.map((manga) => (
-            <li key={manga.id}>
-              <Link href={`manga/${manga.id}`}>
-                {" "}
-                {manga.coverUrl && (
-                  <Image
-                    src={manga.coverUrl}
-                    alt={`${manga.attributes.title.en} poster`}
-                    width={200} // Specify width
-                    height={300} // Specify height
-                  />
-                )}
-                <h3>{manga.attributes.title.en}</h3>
+    <div className="container mx-auto p-4 pt-20">
+      <h1 className="text-2xl font-bold mb-6">Manga List</h1>
+      {mangaList.length === 0 ? (
+        <h2>No manga found.</h2>
+      ) : (
+        <div className="grid grid-cols-5 gap-4">
+          {mangaList.map((manga) => (
+            <div key={manga.id} className="mb-4 relative flex flex-col">
+              <Link href={`/manga/${manga.id}`} className="block">
+                <div className="relative h-64 w-48 bg-gray-200 overflow-hidden">
+                  {manga.coverUrl && (
+                    <Image
+                      src={manga.coverUrl}
+                      alt={`${manga.attributes.title.en} poster`}
+                      width={200} // Set the width
+                      height={300} // Set the height
+                      className="object-cover w-full h-full"
+                    />
+                  )}
+                  <div className="absolute bottom-0 bg-black bg-opacity-60 w-full text-white text-center py-2">
+                    <p className="text-ellipsis overflow-hidden whitespace-nowrap line-clamp-2 hover:line-clamp-none">
+                      {manga.attributes.title.en}
+                    </p>
+                  </div>
+                </div>
               </Link>
-            </li>
-          ))
-        ) : (
-          <p>No manga found.</p>
-        )}
-      </ul>
-    </>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 

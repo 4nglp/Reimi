@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 
-// Function to fetch chapter pages
+// Function to fetch chapter ages
 const fetchChapterPages = async (chapterId) => {
   try {
     const res = await fetch(
@@ -95,7 +95,7 @@ const ChapterPage = () => {
         <select
           value={readingMode}
           onChange={(e) => setReadingMode(e.target.value)}
-          className="p-2 border"
+          className="p-2 border bg-gray-800 text-blac"
         >
           <option value="ltr">Left to Right</option>
           <option value="rtl">Right to Left</option>
@@ -121,7 +121,7 @@ const ChapterPage = () => {
 
       {/* Page and Navigation */}
       <div className="flex justify-between items-center mb-4">
-        <div className="text-left">Part One</div>
+        <div className="text-left">Part one</div>
         <div className="text-center">
           {pages.length > 0 && `${currentPage + 1} / ${pages.length}`}
         </div>

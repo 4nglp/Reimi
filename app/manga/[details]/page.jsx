@@ -32,30 +32,18 @@ const fetchAuthorDetails = async (authorId) => {
   }
 };
 
-// Function to fetch manga chapters dynamically without sorting
-const fetchChaptersWithPagination = async (mangaId) => {
-  let allChapters = [];
-  let page = 1;
-
+// Function to fetch manga chapters dynamically and sorted by latest chapter
+const fetchChapters = async (mangaId) => {
   try {
-    while (true) {
-      const resp = await fetch(
-        `https://api.mangadex.org/manga/${mangaId}/feed?limit=500&translatedLanguage[]=en&order[chapter]=desc`
-      );
-
-      const chaptersData = await resp.json();
-      allChapters = [...allChapters, ...chaptersData.data];
-
-      if (chaptersData.data.length < 100) {
-        break; // Exit when fewer than 100 chapters are returned
-      }
-      page += 1;
-    }
+    const resp = await fetch(
+      `https://api.mangadex.org/manga/${mangaId}/feed?limit=500&translatedLanguage[]=en&order[chapter]=desc&includeEmptyPages=0`
+    );
+    const chaptersData = await resp.json();
+    return chaptersData.data;
   } catch (error) {
     console.error("Error fetching chapters:", error);
+    return [];
   }
-
-  return allChapters.filter((chapter) => chapter.attributes.volume !== null); // Filter out chapters without volumes
 };
 
 const MangaDetailsPage = ({ params }) => {
@@ -63,14 +51,16 @@ const MangaDetailsPage = ({ params }) => {
   const [coverImageUrl, setCoverImageUrl] = useState(null);
   const [authorNames, setAuthorNames] = useState(null);
   const [chapters, setChapters] = useState([]);
+  const [isAdded, setIsAdded] = useState(false);
 
+  // Fetch manga details, authors, cover, and chapters when the component mounts
   useEffect(() => {
     const fetchData = async () => {
       const details = await fetchMangaDetails(params.details);
-      setMangaDetails(details);
-
-      // Fetch cover image if available
       if (details) {
+        setMangaDetails(details);
+
+        // Fetch cover image if available
         const coverArtRelationship = details.relationships.find(
           (r) => r.type === "cover_art"
         );
@@ -79,18 +69,28 @@ const MangaDetailsPage = ({ params }) => {
           : null;
 
         if (coverArtId) {
-          const coverRes = await fetch(
-            `https://api.mangadex.org/cover/${coverArtId}`
-          );
-          const coverData = await coverRes.json();
-          const fileName = coverData.data.attributes.fileName;
+          try {
+            const coverRes = await fetch(
+              `https://api.mangadex.org/cover/${coverArtId}`
+            );
+            const coverData = await coverRes.json();
 
-          setCoverImageUrl(
-            `https://uploads.mangadex.org/covers/${params.details}/${fileName}`
-          );
+            if (coverData.data && coverData.data.attributes.fileName) {
+              const fileName = coverData.data.attributes.fileName;
+              setCoverImageUrl(
+                `https://uploads.mangadex.org/covers/${params.details}/${fileName}`
+              );
+            } else {
+              console.log("No cover image available");
+            }
+          } catch (error) {
+            console.error("Error fetching cover image:", error);
+          }
+        } else {
+          console.log("Cover art relationship not found");
         }
 
-        // Fetch author details
+        // Fetch author details and other data
         const authors = details.relationships.filter(
           (r) => r.type === "author"
         );
@@ -98,16 +98,45 @@ const MangaDetailsPage = ({ params }) => {
           const authorName = await fetchAuthorDetails(authors[0].id);
           setAuthorNames(authorName);
         }
-      }
 
-      // Fetch all chapters using pagination, and filter out chapters without volumes
-      const allChapters = await fetchChaptersWithPagination(params.details);
-      setChapters(allChapters);
-      console.log(allChapters);
+        // Fetch all chapters
+        const allChapters = await fetchChapters(params.details);
+        setChapters(allChapters);
+
+        // Check if manga is already added to the library
+        const library = JSON.parse(localStorage.getItem("library")) || [];
+        const isMangaInLibrary = library.some((item) => item.id === details.id);
+        setIsAdded(isMangaInLibrary);
+      }
     };
 
     fetchData();
   }, [params.details]);
+
+  // Add to library function
+  const addToLibrary = () => {
+    const mangaData = {
+      id: mangaDetails.id,
+      title: mangaDetails.attributes.title?.en,
+      coverImageUrl,
+      chapterCount: chapters.length,
+    };
+
+    const library = JSON.parse(localStorage.getItem("library")) || [];
+    library.push(mangaData);
+    localStorage.setItem("library", JSON.stringify(library));
+    setIsAdded(true);
+  };
+
+  // Remove from library function
+  const removeFromLibrary = () => {
+    const library = JSON.parse(localStorage.getItem("library")) || [];
+    const updatedLibrary = library.filter(
+      (item) => item.id !== mangaDetails.id
+    );
+    localStorage.setItem("library", JSON.stringify(updatedLibrary));
+    setIsAdded(false);
+  };
 
   if (!mangaDetails) return <h1>Loading...</h1>;
 
@@ -124,7 +153,7 @@ const MangaDetailsPage = ({ params }) => {
   const genreNames =
     genres
       .map((tag) => tag.attributes?.name?.en)
-      .filter((name) => name !== undefined) // Remove undefined names
+      .filter((name) => name !== undefined)
       .join(", ") || "No genres available";
 
   // Additional manga details
@@ -137,12 +166,14 @@ const MangaDetailsPage = ({ params }) => {
         {/* Left Section: Poster Image */}
         <div className="flex-shrink-0">
           {coverImageUrl ? (
-            <Image
-              src={coverImageUrl}
-              alt={`Poster for ${mangaTitle}`}
-              width={300}
-              height={450}
-            />
+            <div className="relative w-[300px] h-[450px]">
+              <Image
+                src={coverImageUrl}
+                alt={`Poster for ${mangaTitle}`}
+                layout="fill"
+                objectFit="cover"
+              />
+            </div>
           ) : (
             <h1>No poster available</h1>
           )}
@@ -163,8 +194,7 @@ const MangaDetailsPage = ({ params }) => {
             {/* Author and Other Details */}
             <p className="mb-2">
               <strong>
-                {" "}
-                {authorNames || "Unknown author"}, {status}, {year}{" "}
+                {authorNames || "Unknown author"}, {status}, {year}
               </strong>
             </p>
             <p className="mb-2">
@@ -174,11 +204,16 @@ const MangaDetailsPage = ({ params }) => {
 
           {/* Buttons */}
           <div>
-            <button className="bg-black-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-              Add to Library
-            </button>
-            <button className="bg-black-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
-              Start reading/Resume
+            <button
+              disabled={isAdded}
+              onClick={isAdded ? removeFromLibrary : addToLibrary}
+              className={`${
+                isAdded
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-green-600 hover:bg-green-700"
+              } text-white font-bold py-2 px-4 rounded`}
+            >
+              {isAdded ? "Added" : "Add to Library"}
             </button>
           </div>
         </div>
@@ -192,14 +227,14 @@ const MangaDetailsPage = ({ params }) => {
             <ul>
               {chapters
                 .sort((a, b) => {
-                  const chapterA = parseFloat(a.attributes.chapter) || 0; // Fallback if chapter is missing
+                  const chapterA = parseFloat(a.attributes.chapter) || 0;
                   const chapterB = parseFloat(b.attributes.chapter) || 0;
-                  return chapterB - chapterA; // Sort from biggest to smallest
+                  return chapterB - chapterA;
                 })
                 .map((chapter) => (
                   <li key={chapter.id} className="mb-2">
                     <Link
-                      href={`/chapter/${chapter.id}`} // Use dynamic route for each chapter
+                      href={`/chapter/${chapter.id}`}
                       className="text-white-1000 hover:text-white-2000"
                     >
                       <strong>Chapter {chapter.attributes.chapter}</strong>{" "}
