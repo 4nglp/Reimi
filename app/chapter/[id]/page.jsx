@@ -1,151 +1,80 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import Image from "next/image";
 
-// Function to fetch chapter ages
-const fetchChapterPages = async (chapterId) => {
-  try {
-    const res = await fetch(
-      `https://api.mangadex.org/at-home/server/${chapterId}`
-    );
-    const data = await res.json();
-    return data.chapter.data.map(
-      (page) => `${data.baseUrl}/data/${data.chapter.hash}/${page}`
-    );
-  } catch (error) {
-    console.error("Failed to fetch chapter pages:", error);
-    return [];
-  }
-};
-
-// Function to fetch chapter metadata (number, title)
-const fetchChapterMetadata = async (chapterId) => {
-  try {
-    const res = await fetch(`https://api.mangadex.org/chapter/${chapterId}`);
-    const data = await res.json();
-    return data.data; // Correctly access the metadata
-  } catch (error) {
-    console.error("Failed to fetch chapter metadata:", error);
-    return null;
-  }
-};
-
-const ChapterPage = () => {
-  const { id: chapterId } = useParams();
+const MangaReader = () => {
   const [pages, setPages] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
-  const [readingMode, setReadingMode] = useState("ltr");
-  const [chapterData, setChapterData] = useState(null); // For chapter number and title
+  const [readingMode, setReadingMode] = useState("right-to-left");
+  const { id: chapterId } = useParams();
 
   useEffect(() => {
-    const loadPages = async () => {
-      const chapterPages = await fetchChapterPages(chapterId);
-      setPages(chapterPages);
-
-      // Fetch chapter metadata (number, title, etc.)
-      const metadata = await fetchChapterMetadata(chapterId);
-      console.log("Chapter Metadata:", metadata); // Log to check if data exists
-      setChapterData(metadata);
-    };
-    loadPages();
-  }, [chapterId]);
-
-  // Handle keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (!pages || pages.length === 0) return;
-
-      if (readingMode === "ltr") {
-        if (e.key === "ArrowRight" || e.key === " ") {
-          if (currentPage < pages.length - 1) setCurrentPage(currentPage + 1);
-        } else if (e.key === "ArrowLeft") {
-          if (currentPage > 0) setCurrentPage(currentPage - 1);
+    if (!chapterId) return;
+    const fetchPages = async () => {
+      try {
+        const response = await fetch(
+          `https://api.mangadex.org/at-home/server/${chapterId}`
+        );
+        const data = await response.json();
+        if (data.chapter && data.chapter.data) {
+          const pageUrls = data.chapter.data.map(
+            (file) => `${data.baseUrl}/data/${data.chapter.hash}/${file}`
+          );
+          setPages(pageUrls);
         }
-      } else if (readingMode === "rtl") {
-        if (e.key === "ArrowLeft" || e.key === " ") {
-          if (currentPage < pages.length - 1) setCurrentPage(currentPage + 1);
-        } else if (e.key === "ArrowRight") {
-          if (currentPage > 0) setCurrentPage(currentPage - 1);
-        }
-      } else if (readingMode === "ttb") {
-        if (e.key === "ArrowRight" || e.key === " ") {
-          if (currentPage < pages.length - 1) setCurrentPage(currentPage + 1);
-        } else if (e.key === "ArrowLeft") {
-          if (currentPage > 0) setCurrentPage(currentPage - 1);
-        }
+      } catch (error) {
+        console.error("Failed to load pages", error);
+      } finally {
+        setLoading(false);
       }
     };
+    fetchPages();
+  }, [chapterId]);
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [currentPage, pages, readingMode]);
+  const handleNextPage = () => {
+    if (currentPage < pages.length - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
-  if (!pages || pages.length === 0) {
-    return <div>Loading pages...</div>;
+  const handlePreviousPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handlePageClick = (e) => {
+    const clickX = e.clientX;
+    const windowWidth = window.innerWidth;
+
+    if (clickX <= windowWidth * 0.5) {
+      handlePreviousPage();
+    } else {
+      handleNextPage();
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
-    <div className="relative">
-      {/* Reading Mode Selector */}
-      <div className="flex justify-between items-center mb-4">
-        <h1>Reading mode</h1>
-        <select
-          value={readingMode}
-          onChange={(e) => setReadingMode(e.target.value)}
-          className="p-2 border bg-gray-800 text-blac"
-        >
-          <option value="ltr">Left to Right</option>
-          <option value="rtl">Right to Left</option>
-          <option value="ttb">Top to Bottom</option>
-        </select>
-      </div>
+    <div
+      className="manga-reader-container relative h-screen w-screen overflow-hidden"
+      onClick={handlePageClick}
+    >
+      <img
+        src={pages[currentPage]}
+        alt={`Page ${currentPage + 1}`}
+        className="object-contain h-full w-full transition-transform duration-500 ease-in-out"
+      />
 
-      {/* Chapter Info */}
-      <div className="mb-4 text-center">
-        {chapterData ? (
-          <>
-            <div className="text-2xl font-bold">
-              Chapter {chapterData.attributes.chapter}
-            </div>
-            <div className="text-lg mt-2">
-              {chapterData.attributes.title || "Untitled"}
-            </div>
-          </>
-        ) : (
-          <p>Loading chapter info...</p>
-        )}
-      </div>
-
-      {/* Page and Navigation */}
-      <div className="flex justify-between items-center mb-4">
-        <div className="text-left">Part one</div>
-        <div className="text-center">
-          {pages.length > 0 && `${currentPage + 1} / ${pages.length}`}
-        </div>
-        <div className="text-right">
-          <button className="p-2 bg-blue-500 text-white">Menu</button>
-        </div>
-      </div>
-
-      {/* Display Current Page */}
-      <div>
-        {pages.length > 0 && (
-          <div className={`page-container ${readingMode}`}>
-            <Image
-              src={pages[currentPage]}
-              alt={`Page ${currentPage + 1}`}
-              width={600}
-              height={800}
-              layout="intrinsic"
-            />
-          </div>
-        )}
-      </div>
+      {/* Invisible 50/50 split for navigation */}
+      <div className="absolute top-0 left-0 h-full" style={{ width: "50%" }} />
+      <div className="absolute top-0 right-0 h-full" style={{ width: "50%" }} />
     </div>
   );
 };
 
-export default ChapterPage;
+export default MangaReader;

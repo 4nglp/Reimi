@@ -4,39 +4,64 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 
-  Note: The styles for this gradient grid background is heavily inspired by the creator of this amazing site (https://dub.sh) – all credits go to them! 
-*/
-
+/* Main container setup */
 .main {
   width: 100vw;
-  min-height: 100vh;
+  height: 100vh;
   position: fixed;
   display: flex;
   justify-content: center;
-  padding: 120px 24px 160px 24px;
+  align-items: center;
+  padding: 0;
   pointer-events: none;
 }
 
-@media screen and (max-width: 640px) {
-  .main {
-    padding: 0;
-  }
-}
-
+/* Enable dark mode and set background color */
 html {
-  /* Enable dark mode for the entire website */
+  height: 100%;
+  margin: 0;
+  padding: 0;
   background-color: #121212;
   color: white;
+  overflow: auto;
 }
 
 body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto; /* Allow scrolling */
   background-color: #121212;
   color: white;
 }
 
-/* Tailwind Styles */
+/* Manga reader setup */
+.manga-reader-container {
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Allow scrolling only in manga reader */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+.manga-pages {
+  display: flex;
+  flex-direction: row; /* Flex direction will change based on reading mode */
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  overflow: hidden;
+}
+
+.manga-page {
+  max-width: 100%;
+  height: 100vh;
+  object-fit: contain; /* Adjust image fitting */
+  transition: transform 0.5s ease-in-out;
+}
+
+/* Tailwind Styles */
 .app {
   @apply relative z-10 flex justify-center items-center flex-col max-w-7xl mx-auto sm:px-16 px-6;
 }
