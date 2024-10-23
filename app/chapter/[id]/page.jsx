@@ -30,18 +30,13 @@ const MangaReader = () => {
           });
         }
       } catch (error) {
-        console.error("Failed to load pages", error);
+        return <h1>Error 500</h1>;
       } finally {
         setLoading(false);
       }
     };
     fetchPages();
   }, [chapterId]);
-
-  // Scroll to the top of the page when the currentPage changes
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [currentPage]);
 
   // Handle Escape key press to go back to the previous page
   useEffect(() => {
@@ -77,12 +72,12 @@ const MangaReader = () => {
     <div className="manga-reader-container w-screen h-screen overflow-hidden relative">
       <button
         onClick={handlePreviousPage}
-        className="absolute left-0 top-0 h-full w-1/5 z-10"
+        className="absolute left-0 top-0 h-full w-1/2 z-10"
         style={{ display: currentPage === 0 ? "none" : "block" }} // Hide button if on the first page
       />
       <button
         onClick={handleNextPage}
-        className="absolute right-0 top-0 h-full w-1/5 z-10"
+        className="absolute right-0 top-0 h-full w-1/2 z-10"
         style={{ display: currentPage === pages.length - 1 ? "none" : "block" }} // Hide button if on the last page
       />
       <img

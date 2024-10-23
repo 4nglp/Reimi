@@ -61,6 +61,15 @@ body {
   transition: transform 0.5s ease-in-out;
 }
 
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* Ensure it stays on top */
+  background-color: white; /* Optional: ensure it's visible */
+}
+
 /* Tailwind Styles */
 .app {
   @apply relative z-10 flex justify-center items-center flex-col max-w-7xl mx-auto sm:px-16 px-6;

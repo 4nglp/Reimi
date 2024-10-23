@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Nav from "@components/Nav";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -51,31 +52,35 @@ const SearchPage = ({ searchParams }) => {
   }, [q]);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Search Results for {q}</h1>
-      {searchResults.length > 0 ? (
-        <ul className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          {searchResults.map((manga) => (
-            <li key={manga.id} className="mb-4 flex flex-col items-center">
-              <Link href={`/manga/${manga.id}`} className="text-white-600">
-                {" "}
-                {manga.coverUrl && (
-                  <Image
-                    src={manga.coverUrl}
-                    alt={`${manga.attributes.title.en} poster`}
-                    width={200}
-                    height={300}
-                    className="object-cover"
-                  />
-                )}
-                {manga.attributes.title.en || "Untitled"}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No results found.</p>
-      )}
+    <div>
+      <Nav />{" "}
+      <div className="container mx-auto p-4">
+        <h1 className="text-3xl font-bold mb-6">Search Results for {q}</h1>
+        {searchResults.length > 0 ? (
+          <ul className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            {searchResults.map((manga) => (
+              <li key={manga.id} className="mb-4 flex flex-col items-center">
+                <Link href={`/manga/${manga.id}`} className="text-white-600">
+                  {manga.coverUrl && (
+                    <div className="relative w-48 h-72 bg-gray-200 overflow-hidden">
+                      <img
+                        src={manga.coverUrl}
+                        alt={`${manga.attributes.title.en} poster`}
+                        className="object-cover w-full h-full"
+                      />
+                      <div className="absolute bottom-0 w-full bg-black bg-opacity-60 text-white text-center py-2">
+                        {manga.attributes.title.en || "Untitled"}
+                      </div>
+                    </div>
+                  )}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No results found.</p>
+        )}
+      </div>
     </div>
   );
 };
