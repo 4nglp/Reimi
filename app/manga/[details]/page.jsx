@@ -1,5 +1,5 @@
 "use client"; // Make this a client component
-
+import Nav from "@components/Nav";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -161,91 +161,94 @@ const MangaDetailsPage = ({ params }) => {
   const status = mangaDetails.attributes.status || "Unknown status";
 
   return (
-    <div className="container mx-auto p-4 pt-20">
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Left Section: Poster Image */}
-        <div className="flex-shrink-0">
-          {coverImageUrl ? (
-            <div className="relative w-[300px] h-[450px]">
-              <Image
-                src={coverImageUrl}
-                alt={`Poster for ${mangaTitle}`}
-                layout="fill"
-                objectFit="cover"
-              />
-            </div>
-          ) : (
-            <h1>No poster available</h1>
-          )}
-        </div>
-
-        {/* Right Section: Manga Details */}
-        <div className="flex flex-col justify-between">
-          {/* Title and Alt Title */}
-          <div>
-            <h1 className="text-4xl font-bold mb-2">{mangaTitle}</h1>
-            {mangaAltTitle !== "No alt title available" && (
-              <h2 className="text-xl text-gray-600 mb-4">{mangaAltTitle}</h2>
+    <div>
+      <Nav />{" "}
+      <div className="container mx-auto p-4 pt-20">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Left Section: Poster Image */}
+          <div className="flex-shrink-0">
+            {coverImageUrl ? (
+              <div className="relative w-[300px] h-[450px]">
+                <Image
+                  src={coverImageUrl}
+                  alt={`Poster for ${mangaTitle}`}
+                  layout="fill"
+                  objectFit="cover"
+                />
+              </div>
+            ) : (
+              <h1>No poster available</h1>
             )}
-
-            {/* Description */}
-            <p className="mb-4">{mangaDescription}</p>
-
-            {/* Author and Other Details */}
-            <p className="mb-2">
-              <strong>
-                {authorNames || "Unknown author"}, {status}, {year}
-              </strong>
-            </p>
-            <p className="mb-2">
-              <strong>Genres:</strong> {genreNames}
-            </p>
           </div>
 
-          {/* Buttons */}
-          <div>
-            <button
-              disabled={isAdded}
-              onClick={isAdded ? removeFromLibrary : addToLibrary}
-              className={`${
-                isAdded
-                  ? "bg-gray-600 cursor-not-allowed"
-                  : "bg-green-600 hover:bg-green-700"
-              } text-white font-bold py-2 px-4 rounded`}
-            >
-              {isAdded ? "Added" : "Add to Library"}
-            </button>
+          {/* Right Section: Manga Details */}
+          <div className="flex flex-col justify-between">
+            {/* Title and Alt Title */}
+            <div>
+              <h1 className="text-4xl font-bold mb-2">{mangaTitle}</h1>
+              {mangaAltTitle !== "No alt title available" && (
+                <h2 className="text-xl text-gray-600 mb-4">{mangaAltTitle}</h2>
+              )}
+
+              {/* Description */}
+              <p className="mb-4">{mangaDescription}</p>
+
+              {/* Author and Other Details */}
+              <p className="mb-2">
+                <strong>
+                  {authorNames || "Unknown author"}, {status}, {year}
+                </strong>
+              </p>
+              <p className="mb-2">
+                <strong>Genres:</strong> {genreNames}
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div>
+              <button
+                disabled={isAdded}
+                onClick={isAdded ? removeFromLibrary : addToLibrary}
+                className={`${
+                  isAdded
+                    ? "bg-gray-600 cursor-not-allowed"
+                    : "bg-green-600 hover:bg-green-700"
+                } text-white font-bold py-2 px-4 rounded`}
+              >
+                {isAdded ? "Added" : "Add to Library"}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Chapter List Section */}
-      <div className="mt-6">
-        <h2 className="text-2xl font-bold mb-4">Chapters</h2>
-        <div>
-          {chapters.length > 0 ? (
-            <ul>
-              {chapters
-                .sort((a, b) => {
-                  const chapterA = parseFloat(a.attributes.chapter) || 0;
-                  const chapterB = parseFloat(b.attributes.chapter) || 0;
-                  return chapterB - chapterA;
-                })
-                .map((chapter) => (
-                  <li key={chapter.id} className="mb-2">
-                    <Link
-                      href={`/chapter/${chapter.id}`}
-                      className="text-white-1000 hover:text-white-2000"
-                    >
-                      <strong>Chapter {chapter.attributes.chapter}</strong>{" "}
-                      {chapter.attributes.title || ""}
-                    </Link>
-                  </li>
-                ))}
-            </ul>
-          ) : (
-            <p>No chapters available</p>
-          )}
+        {/* Chapter List Section */}
+        <div className="mt-6">
+          <h2 className="text-2xl font-bold mb-4">Chapters</h2>
+          <div>
+            {chapters.length > 0 ? (
+              <ul>
+                {chapters
+                  .sort((a, b) => {
+                    const chapterA = parseFloat(a.attributes.chapter) || 0;
+                    const chapterB = parseFloat(b.attributes.chapter) || 0;
+                    return chapterB - chapterA;
+                  })
+                  .map((chapter) => (
+                    <li key={chapter.id} className="mb-2">
+                      <Link
+                        href={`/chapter/${chapter.id}`}
+                        className="text-white-1000 hover:text-white-2000"
+                      >
+                        <strong>Chapter {chapter.attributes.chapter}</strong>{" "}
+                        {chapter.attributes.title || ""}
+                      </Link>
+                    </li>
+                  ))}
+              </ul>
+            ) : (
+              <p>No chapters available</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

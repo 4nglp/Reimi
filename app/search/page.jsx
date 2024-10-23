@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import Image from "next/image"; // Import Next.js Image component
+import Image from "next/image";
 import Link from "next/link";
 
 // Accepting search params via props in the App Router

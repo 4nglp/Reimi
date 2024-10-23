@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { FaSearch } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
@@ -20,13 +19,6 @@ const Nav = () => {
     <nav className="flex items-center justify-between w-full mb-4 pt-3">
       <div className="flex gap-4 items-center">
         <Link href="/" className="flex gap-2 items-center">
-          <Image
-            src="/"
-            alt="App Logo"
-            width={30}
-            height={30}
-            className="object-contain"
-          />
           <p>Reimi</p>
         </Link>
         <Link href="/library">Library</Link>
