@@ -16,7 +16,7 @@ const Nav = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between w-full mb-4 pt-3">
+    <nav className="flex items-center justify-between w-full px-4 py-3 mb-4">
       <div className="flex gap-4 items-center">
         <Link href="/" className="flex gap-2 items-center">
           <p>Reimi</p>

@@ -2,13 +2,16 @@
 import Nav from "@components/Nav";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 const LibraryPage = () => {
   const [library, setLibrary] = useState([]);
   const [menuVisible, setMenuVisible] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [selectedMangaId, setSelectedMangaId] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState("Reading");
+
+  const searchParams = useSearchParams();
+  const selectedCategory = searchParams.get("tab") || "Reading"; // Default to 'Reading'
 
   useEffect(() => {
     const storedLibrary = JSON.parse(localStorage.getItem("library")) || [];
@@ -50,25 +53,32 @@ const LibraryPage = () => {
   );
 
   return (
-    <div>
+    <>
       <Nav />
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-6">My Library</h1>
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="border border-gray-300 p-2 mb-4"
-        >
-          <option value="Reading">Reading</option>
-          <option value="On Hold">On Hold</option>
-          <option value="Planning">Planning</option>
-          <option value="Completed">Completed</option>
-          <option value="Dropped">Dropped</option>
-        </select>
+        <h1 className="text-2xl font-bold mb-6">Library</h1>
+        <div className="mb-4 flex gap-4">
+          <Link href="/library?tab=Reading">Reading</Link>
+          <Link href="/library?tab=On Hold" className="ml-4">
+            On Hold
+          </Link>
+          <Link href="/library?tab=Planning" className="ml-4">
+            Planning
+          </Link>
+          <Link href="/library?tab=Completed" className="ml-4">
+            Completed
+          </Link>
+          <Link href="/library?tab=Dropped" className="ml-4">
+            Dropped
+          </Link>
+        </div>
+
         {filteredLibrary.length === 0 ? (
           <h2>Your library is empty for this category.</h2>
         ) : (
           <div className="grid grid-cols-5 gap-4">
+            {" "}
+            {/* Added gap-4 here */}
             {filteredLibrary.map((manga) => (
               <div
                 key={manga.id}
@@ -116,7 +126,7 @@ const LibraryPage = () => {
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 };
 

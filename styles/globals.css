@@ -6,13 +6,14 @@
 
 /* Main container setup */
 .main {
-  width: 100vw;
+  width: auto;
+  max-width: 100%;
   height: 100vh;
   position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0;
+  padding: 0 16px;
   pointer-events: none;
 }
 
@@ -59,15 +60,6 @@ body {
   height: 100vh;
   object-fit: contain; /* Adjust image fitting */
   transition: transform 0.5s ease-in-out;
-}
-
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000; /* Ensure it stays on top */
-  background-color: white; /* Optional: ensure it's visible */
 }
 
 /* Tailwind Styles */
