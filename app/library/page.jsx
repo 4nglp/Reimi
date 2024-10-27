@@ -74,10 +74,9 @@ const LibraryPage = () => {
         </div>
 
         {filteredLibrary.length === 0 ? (
-          <h2>Your library is empty for this category.</h2>
+          <h2>Category is empty.</h2>
         ) : (
           <div className="grid grid-cols-5 gap-4">
-            {" "}
             {/* Added gap-4 here */}
             {filteredLibrary.map((manga) => (
               <div
@@ -88,7 +87,7 @@ const LibraryPage = () => {
                 <Link href={`/manga/${manga.id}`}>
                   <div className="relative w-48 h-72 bg-gray-200 overflow-hidden">
                     <img
-                      src={manga.coverImageUrl}
+                      src={manga.coverImageUrl + ".256.jpg"}
                       alt={manga.title}
                       className="object-cover w-full h-full"
                     />

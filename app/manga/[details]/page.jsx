@@ -142,6 +142,34 @@ const MangaDetailsPage = ({ params }) => {
     setIsAdded(false);
   };
 
+  // Store read chapters in localStorage
+  const markChaptersAsRead = (selectedChapter) => {
+    const readChapters = JSON.parse(localStorage.getItem("readChapters")) || [];
+    const selectedChapterNum = parseInt(selectedChapter.attributes.chapter, 10);
+
+    // Mark all previous chapters as read if selected chapter number is greater than 1
+    if (selectedChapterNum > 1) {
+      for (let i = 1; i <= selectedChapterNum; i++) {
+        if (!readChapters.includes(i)) readChapters.push(i);
+      }
+    } else {
+      readChapters.push(selectedChapterNum);
+    }
+
+    localStorage.setItem("readChapters", JSON.stringify(readChapters));
+  };
+
+  // Trigger marking a chapter as read after all pages are viewed
+  const handleChapterCompletion = (chapter) => {
+    markChaptersAsRead(chapter);
+  };
+
+  // Check if a chapter is read to display it in the UI
+  const isChapterRead = (chapterNum) => {
+    const readChapters = JSON.parse(localStorage.getItem("readChapters")) || [];
+    return readChapters.includes(parseInt(chapterNum, 10));
+  };
+
   if (!mangaDetails) return <h1>Loading...</h1>;
 
   // Extract manga title, alt title, and description
@@ -232,12 +260,19 @@ const MangaDetailsPage = ({ params }) => {
             {chapters.length > 0 ? (
               <ul>
                 {chapters.map((chapter) => (
-                  <li key={chapter.id} className="mb-2">
+                  <li
+                    key={chapter.id}
+                    className={
+                      isChapterRead(chapter.attributes.chapter)
+                        ? "text-gray-500"
+                        : ""
+                    }
+                  >
                     <Link
                       href={`/chapter/${chapter.id}`}
-                      className="text-white-1000 hover:text-white-2000"
+                      onClick={() => handleChapterCompletion(chapter)}
                     >
-                      <strong>Chapter {chapter.attributes.chapter}</strong>{" "}
+                      Chapter {chapter.attributes.chapter} -{" "}
                       {chapter.attributes.title || ""}
                     </Link>
                   </li>
