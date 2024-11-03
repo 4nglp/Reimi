@@ -193,7 +193,7 @@ const MangaDetailsPage = ({ params }) => {
   const status = mangaDetails.attributes.status || "Unknown status";
 
   return (
-    <div>
+    <>
       <Nav />
       <div className="container mx-auto p-4">
         <div className="flex flex-col lg:flex-row gap-6">
@@ -239,15 +239,10 @@ const MangaDetailsPage = ({ params }) => {
             {/* Buttons */}
             <div>
               <button
-                disabled={isAdded}
-                onClick={isAdded ? removeFromLibrary : () => setShowModal(true)} // Open modal instead of adding directly
-                className={`${
-                  isAdded
-                    ? "bg-gray-600 cursor-not-allowed"
-                    : "bg-green-600 hover:bg-green-700"
-                } text-white font-bold py-2 px-4 rounded`}
+                onClick={() => setShowModal(true)} // Open modal instead of adding directly
+                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
               >
-                {isAdded ? "Added" : "Add to Library"}
+                {selectedCategory} {/* Show current category */}
               </button>
             </div>
           </div>
@@ -260,106 +255,107 @@ const MangaDetailsPage = ({ params }) => {
             {chapters.length > 0 ? (
               <ul>
                 {chapters.map((chapter) => (
-                  <li
-                    key={chapter.id}
-                    className={
-                      isChapterRead(chapter.attributes.chapter)
-                        ? "text-gray-500"
-                        : ""
-                    }
-                  >
+                  <li key={chapter.id} className="mb-2">
                     <Link
-                      href={`/chapter/${chapter.id}`}
+                      href={`/manga/${params.details}/chapter/${chapter.id}`}
+                      className={`text-white-600 ${
+                        isChapterRead(chapter.attributes.chapter) ? "bold" : ""
+                      }`}
                       onClick={() => handleChapterCompletion(chapter)}
                     >
-                      Chapter {chapter.attributes.chapter} -{" "}
-                      {chapter.attributes.title || ""}
+                      Chapter {chapter.attributes.chapter}:{" "}
+                      {chapter.attributes.title || "No title"}
                     </Link>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p>No chapters available</p>
+              <p>No chapters available for this manga.</p>
             )}
           </div>
         </div>
+      </div>
 
-        {/* Modal for Category Selection */}
-        {showModal && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70">
-            <div className="bg-gray-800 p-6 rounded shadow-lg w-[600px] relative">
-              {" "}
-              {/* Dark background for modal */}
-              <div className="flex justify-between mb-4">
-                <h2 className="text-lg font-bold text-white">Add to Library</h2>{" "}
-                {/* White text */}
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  &times; {/* Close button */}
-                </button>
-              </div>
-              <div className="flex">
-                {/* Left Side: Mini Poster */}
-                <div className="flex flex-col w-1/2 pr-4">
-                  {coverImageUrl && (
-                    <div className="relative w-full h-60 mb-4">
-                      <Image
-                        src={coverImageUrl}
-                        alt={`Poster for ${mangaTitle}`}
-                        layout="fill"
-                        objectFit="contain"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* Right Side: Title, Status, and Category Selection */}
-                <div className="flex flex-col w-1/2">
-                  <h2 className="text-lg font-bold text-white">{mangaTitle}</h2>{" "}
-                  {/* White text */}
-                  <p className="text-gray-300 mb-2">
-                    Reading Status: {selectedCategory}
-                  </p>{" "}
-                  {/* Lighter gray text */}
-                  <h2 className="text-lg font-bold text-white mb-4">
-                    Select Category
-                  </h2>{" "}
-                  {/* White text */}
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="border border-gray-600 bg-gray-700 text-white p-2 mb-4 w-full"
-                  >
-                    <option value="Reading">Reading</option>
-                    <option value="On Hold">On Hold</option>
-                    <option value="Planning">Planning</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Dropped">Dropped</option>
-                  </select>
-                  {/* Buttons at the bottom right inside the modal */}
-                  <div className="flex justify-end space-x-2 mt-auto">
-                    <button
-                      onClick={() => setShowModal(false)}
-                      className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={addToLibrary}
-                      className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                    >
-                      Add
-                    </button>
+      {/* Add to Library Modal */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70">
+          <div className="bg-gray-800 p-6 rounded shadow-lg w-[600px] relative">
+            <div className="flex justify-between mb-4">
+              <h2 className="text-lg font-bold text-white">Add to Library</h2>
+              <button
+                onClick={() => setShowModal(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                &times; {/* Close button */}
+              </button>
+            </div>
+            <div className="flex">
+              {/* Left Side: Mini Poster */}
+              <div className="flex flex-col w-1/2 pr-4">
+                {coverImageUrl && (
+                  <div className="relative w-full h-60 mb-4">
+                    <Image
+                      src={coverImageUrl}
+                      alt={`Poster for ${mangaTitle}`}
+                      layout="fill"
+                      objectFit="contain"
+                    />
                   </div>
+                )}
+              </div>
+
+              {/* Right Side: Title and Category Selection */}
+              <div className="flex flex-col w-1/2">
+                <h2 className="text-lg font-bold text-white">{mangaTitle}</h2>
+                <p className="text-gray-300 mb-2">
+                  Reading Status: {selectedCategory}
+                </p>
+                <h2 className="text-lg font-bold text-white mb-4">
+                  Select Category
+                </h2>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="border border-gray-600 bg-gray-700 text-white p-2 mb-4 w-full"
+                >
+                  <option value="Reading">Reading</option>
+                  <option value="On Hold">On Hold</option>
+                  <option value="Planning">Planning</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Dropped">Dropped</option>
+                  <option value="None">None</option>{" "}
+                  {/* Add this option to remove entry */}
+                </select>
+
+                {/* Buttons at the bottom right inside the modal */}
+                <div className="flex justify-end space-x-2 mt-auto">
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (selectedCategory === "None") {
+                        removeFromLibrary();
+                        setShowModal(false); // Call remove function if "None" is selected
+                      } else {
+                        addToLibrary(); // Call add function otherwise
+                      }
+                    }}
+                    className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                  >
+                    {selectedCategory === "None" ? "Remove" : "Add"}{" "}
+                    {/* Dynamic button text */}
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 };
 

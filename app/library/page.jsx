@@ -55,6 +55,7 @@ const LibraryPage = () => {
   return (
     <>
       <Nav />
+
       <div className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-6">Library</h1>
         <div className="mb-4 flex gap-4">

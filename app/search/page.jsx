@@ -52,8 +52,8 @@ const SearchPage = ({ searchParams }) => {
   }, [q]);
 
   return (
-    <div>
-      <Nav />{" "}
+    <>
+      <Nav />
       <div className="container mx-auto p-4">
         <h1 className="text-3xl font-bold mb-6">Search Results for {q}</h1>
         {searchResults.length > 0 ? (
@@ -81,7 +81,7 @@ const SearchPage = ({ searchParams }) => {
           <p>No results found.</p>
         )}
       </div>
-    </div>
+    </>
   );
 };
 
