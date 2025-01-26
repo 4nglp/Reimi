@@ -1,13 +1,16 @@
 import Nav from "@components/Nav";
-import Image from "@node_modules/next/image";
+import Image from "next/image";
 import Link from "next/link";
 
-export async function getServerSideProps({ query }) {
-  const { q } = query;
+export const metadata = {
+  title: "Search Manga",
+  description: "Search for your favorite manga",
+};
 
+async function fetchSearchResults(query) {
   try {
     const res = await fetch(
-      `https://api.mangadex.org/manga?title=${q}&limit=10`
+      `https://api.mangadex.org/manga?title=${query}&limit=10`
     );
     const data = await res.json();
 
@@ -33,29 +36,22 @@ export async function getServerSideProps({ query }) {
       })
     );
 
-    return {
-      props: {
-        searchResults: mangasWithCovers,
-        query: q,
-      },
-    };
+    return mangasWithCovers;
   } catch (error) {
     console.error("Error fetching search results:", error);
-    return {
-      props: {
-        searchResults: [],
-        query: q,
-      },
-    };
+    return [];
   }
 }
 
-const SearchPage = ({ searchResults, query }) => {
+const SearchPage = async ({ searchParams }) => {
+  const { q } = searchParams;
+  const searchResults = await fetchSearchResults(q);
+
   return (
     <>
       <Nav />
       <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-6">Search Results for {query}</h1>
+        <h1 className="text-3xl font-bold mb-6">Search Results for {q}</h1>
         {searchResults.length > 0 ? (
           <ul className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {searchResults.map((manga) => (
