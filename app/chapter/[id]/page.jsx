@@ -22,15 +22,13 @@ const MangaReader = () => {
             (file) => `${data.baseUrl}/data/${data.chapter.hash}/${file}`
           );
           setPages(pageUrls);
-
-          // Preload all images
           pageUrls.forEach((url) => {
             const img = new Image();
             img.src = url;
           });
         }
       } catch (error) {
-        return <h1>Error 500</h1>;
+        console.error("Error fetching chapter pages:", error);
       } finally {
         setLoading(false);
       }
@@ -38,11 +36,10 @@ const MangaReader = () => {
     fetchPages();
   }, [chapterId]);
 
-  // Handle Escape key press to go back to the previous page
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
-        router.back(); // Go back to the previous page
+        router.back();
       }
     };
 
