@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 
 const MangaReader = () => {
   const [pages, setPages] = useState([]);
@@ -22,10 +23,6 @@ const MangaReader = () => {
             (file) => `${data.baseUrl}/data/${data.chapter.hash}/${file}`
           );
           setPages(pageUrls);
-          pageUrls.forEach((url) => {
-            const img = new Image();
-            img.src = url;
-          });
         }
       } catch (error) {
         console.error("Error fetching chapter pages:", error);
@@ -77,10 +74,12 @@ const MangaReader = () => {
         className="absolute right-0 top-0 h-full w-1/2 z-10"
         style={{ display: currentPage === pages.length - 1 ? "none" : "block" }} // Hide button if on the last page
       />
-      <img
+      <Image
         src={pages[currentPage]}
         alt={`Page ${currentPage + 1}`}
-        className="object-contain w-full h-full"
+        layout="fill"
+        objectFit="contain"
+        quality={75}
       />
     </div>
   );
