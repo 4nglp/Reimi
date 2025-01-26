@@ -1,9 +1,61 @@
-"use client";
 import Nav from "@components/Nav";
 import Link from "next/link";
-import Image from "@node_modules/next/image";
+import Image from "next/image";
 
-const GetMangaList = ({ mangaList }) => {
+const GetMangaList = async () => {
+  const fetchMangaList = async () => {
+    try {
+      const response = await fetch("https://api.mangadex.org/manga?limit=50", {
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "MangaReaderApp/1.0 (https://reimi.vercel.app/)",
+        },
+        cache: "no-store", // Ensures fresh data in production
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch manga data");
+      }
+
+      const data = await response.json();
+
+      // Process cover images
+      const mangasWithCovers = await Promise.all(
+        data.data.map(async (manga) => {
+          const coverRelationship = manga.relationships.find(
+            (rel) => rel.type === "cover_art"
+          );
+
+          if (coverRelationship) {
+            const coverResponse = await fetch(
+              `https://api.mangadex.org/cover/${coverRelationship.id}`
+            );
+
+            if (!coverResponse.ok) {
+              console.warn(`Cover fetch failed for manga ID ${manga.id}`);
+              return manga; // Fallback if the cover fetch fails
+            }
+
+            const coverData = await coverResponse.json();
+            return {
+              ...manga,
+              coverUrl: `https://uploads.mangadex.org/covers/${manga.id}/${coverData.data.attributes.fileName}`,
+            };
+          }
+
+          return manga; // Return manga without cover if missing
+        })
+      );
+
+      return mangasWithCovers;
+    } catch (error) {
+      console.error("Error fetching manga list:", error);
+      return [];
+    }
+  };
+
+  const mangaList = await fetchMangaList();
+
   return (
     <>
       <Nav />
@@ -21,7 +73,7 @@ const GetMangaList = ({ mangaList }) => {
                       <Image
                         src={manga.coverUrl}
                         alt={`${manga.attributes.title.en} poster`}
-                        className="object-cover w-full h-full" // Ensure full coverage without whitespace
+                        className="object-cover w-full h-full"
                         width={400}
                         height={800}
                       />
@@ -39,52 +91,5 @@ const GetMangaList = ({ mangaList }) => {
     </>
   );
 };
-
-export async function getServerSideProps() {
-  try {
-    const apiRes = await fetch("https://api.mangadex.org/manga?limit=50", {
-      headers: {
-        "Content-Type": "application/json",
-        "User-Agent": "MangaReaderApp/1.0 (https://reimi.vercel.app/)",
-      },
-    });
-    const res = await apiRes.json();
-
-    const mangasWithCovers = await Promise.all(
-      res.data.map(async (manga) => {
-        const coverRelationship = manga.relationships.find(
-          (rel) => rel.type === "cover_art"
-        );
-
-        if (coverRelationship) {
-          const coverRes = await fetch(
-            `https://api.mangadex.org/cover/${coverRelationship.id}`
-          );
-          const coverData = await coverRes.json();
-
-          return {
-            ...manga,
-            coverUrl: `https://uploads.mangadex.org/covers/${manga.id}/${coverData.data.attributes.fileName}`,
-          };
-        }
-
-        return manga;
-      })
-    );
-
-    return {
-      props: {
-        mangaList: mangasWithCovers,
-      },
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      props: {
-        mangaList: [],
-      },
-    };
-  }
-}
 
 export default GetMangaList;
