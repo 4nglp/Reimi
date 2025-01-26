@@ -10,7 +10,7 @@ const GetMangaList = async () => {
           "Content-Type": "application/json",
           "User-Agent": "MangaReaderApp/1.0 (https://reimi.vercel.app/)",
         },
-        cache: "no-store", // Ensures fresh data in production
+        cache: "no-store",
       });
 
       if (!response.ok) {
@@ -19,7 +19,6 @@ const GetMangaList = async () => {
 
       const data = await response.json();
 
-      // Process cover images
       const mangasWithCovers = await Promise.all(
         data.data.map(async (manga) => {
           const coverRelationship = manga.relationships.find(
@@ -33,7 +32,7 @@ const GetMangaList = async () => {
 
             if (!coverResponse.ok) {
               console.warn(`Cover fetch failed for manga ID ${manga.id}`);
-              return manga; // Fallback if the cover fetch fails
+              return manga;
             }
 
             const coverData = await coverResponse.json();
@@ -43,7 +42,7 @@ const GetMangaList = async () => {
             };
           }
 
-          return manga; // Return manga without cover if missing
+          return manga;
         })
       );
 
