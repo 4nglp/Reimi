@@ -57,6 +57,7 @@ const GetMangaList = async () => {
   return (
     <>
       <Nav />
+      <h1 className="text-2xl font-bold mb-4">Manga list</h1>
       <Entry entries={mangaList} />
     </>
   );
