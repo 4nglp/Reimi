@@ -10,7 +10,9 @@ const RootLayout = ({ children }) => {
   return (
     <html className>
       <body>
-        <main className="app">{children}</main>
+        <div className=" flex flex-col justify-start items-center sm:justify-center sm:px-4 px-6 max-w-full mx-auto">
+          {children}
+        </div>
       </body>
     </html>
   );

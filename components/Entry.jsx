@@ -5,11 +5,11 @@ const Entry = ({ entries }) => {
   return (
     <div className="mx-auto p-4">
       {entries.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
           {entries.map((entry) => (
-            <div key={entry.id} className="relative flex flex-col mb-4">
-              <Link href={`/manga/${entry.id}`} className="block">
-                <div className="relative w-full bg-gray-200 overflow-hidden flex-shrink-0 transition-transform transform hover:scale-105">
+            <div key={entry.id} className="relative flex flex-col mb-1 h-full">
+              <Link href={`/manga/${entry.id}`} className="block h-full">
+                <div className="relative w-full h-full bg-gray-200 overflow-hidden flex-shrink-0 transition-transform transform hover:scale-105">
                   {entry.coverUrl && (
                     <div className="w-full h-full bg-gray-100 relative">
                       <Image
