@@ -11,13 +11,17 @@ const MangaReader = () => {
 
   useEffect(() => {
     if (!chapterId) return;
+
     const fetchPages = async () => {
       try {
+        // Call your proxy API instead of directly calling MangaDex API
         const response = await fetch(
-          `https://api.mangadex.org/at-home/server/${chapterId}`
+          `/api/mangadex-proxy?chapterId=${chapterId}`
         );
         const data = await response.json();
+
         if (data.chapter && data.chapter.data) {
+          // Map the pages data to image URLs
           const pageUrls = data.chapter.data.map(
             (file) => `${data.baseUrl}/data/${data.chapter.hash}/${file}`
           );
@@ -29,13 +33,18 @@ const MangaReader = () => {
         setLoading(false);
       }
     };
+
     fetchPages();
   }, [chapterId]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
-        router.back();
+        router.back(); // Go back when pressing Escape
+      } else if (event.key === "ArrowRight") {
+        handleNextPage(); // Go to the next page when pressing the right arrow
+      } else if (event.key === "ArrowLeft") {
+        handlePreviousPage(); // Go to the previous page when pressing the left arrow
       }
     };
 
@@ -43,7 +52,7 @@ const MangaReader = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [router]);
+  }, [router, currentPage, pages]);
 
   const handleNextPage = () => {
     if (currentPage < pages.length - 1) {
