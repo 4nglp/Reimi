@@ -115,8 +115,8 @@ export default async function MangaDetailsPage({ params }) {
                       href={`/manga/${params.details}/chapter/${chapter.id}`}
                       className="text-white-600"
                     >
-                      Chapter {chapter.attributes.chapter}:{" "}
-                      {chapter.attributes.title || "No title"}
+                      Chapter {chapter.attributes.chapter}
+                      {chapter.attributes.title || ""}
                     </Link>
                   </li>
                 ))}

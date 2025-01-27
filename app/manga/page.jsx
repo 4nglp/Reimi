@@ -1,14 +1,13 @@
 import Nav from "@components/Nav";
-import Link from "next/link";
-import Image from "next/image";
+import Entry from "@components/Entry";
 
 const GetMangaList = async () => {
   const fetchMangaList = async () => {
     try {
-      const response = await fetch("https://api.mangadex.org/manga?limit=50", {
+      const response = await fetch("https://api.mangadex.org/manga?limit=100", {
         headers: {
           "Content-Type": "application/json",
-          "User-Agent": "MangaReaderApp/1.0 (https://reimi.vercel.app/)",
+          "User-Agent": "Reimi@0.1.0 (https://reimi.vercel.app/)",
         },
         cache: "no-store",
       });
@@ -58,35 +57,7 @@ const GetMangaList = async () => {
   return (
     <>
       <Nav />
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-6">Manga List</h1>
-        {mangaList.length === 0 ? (
-          <h2>No manga found.</h2>
-        ) : (
-          <div className="grid grid-cols-5 gap-4">
-            {mangaList.map((manga) => (
-              <div key={manga.id} className="relative flex flex-col">
-                <Link href={`/manga/${manga.id}`} className="block">
-                  <div className="relative w-48 h-72 bg-gray-200 overflow-hidden flex-shrink-0">
-                    {manga.coverUrl && (
-                      <Image
-                        src={manga.coverUrl}
-                        alt={`${manga.attributes.title.en} poster`}
-                        className="object-cover w-full h-full"
-                        width={400}
-                        height={800}
-                      />
-                    )}
-                    <div className="absolute bottom-0 w-full bg-black bg-opacity-60 text-white text-center py-2">
-                      {manga.attributes.title.en}
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <Entry entries={mangaList} />
     </>
   );
 };
