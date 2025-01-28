@@ -62,7 +62,7 @@ const Home = () => {
       description:
         "Two children unexpectedly meet in the midst of war. After running away from the chaos, they come across a long empty road. With no adults to rely on, the two strangers, now become friends, walk alongside each other to see what's at the end of the road. All they hope is to keep being able to move forward. Just what kind of trials and tragedy awaits them during their journey for survival?",
       coverUrl:
-        "https://uploads.mangadex.org/covers/67bd081f-1c40-4ae2-95a2-6af29de4fc01/29dcabe0-9efe-4575-9fcf-36be55363591.jpg      ",
+        "https://uploads.mangadex.org/covers/67bd081f-1c40-4ae2-95a2-6af29de4fc01/29dcabe0-9efe-4575-9fcf-36be55363591.jpg",
       author: "Jeong Ji-Hoon",
       genres:
         "Psychological, Adventure, Post-Apocalyptic, Sexual Violence, Gore, Drama, Web Comic, Tragedy",
