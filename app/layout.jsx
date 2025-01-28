@@ -1,17 +1,18 @@
+import { Analytics } from "@vercel/analytics/react";
 import "@styles/globals.css";
-import Nav from "@components/Nav";
 
 export const metadata = {
   title: "Reimi",
-  description: "Manga reader app",
+  description: "A simple manga reader app",
 };
 
 const RootLayout = ({ children }) => {
   return (
-    <html className>
+    <html>
       <body>
         <div className=" flex flex-col justify-start items-center sm:justify-center sm:px-4 px-6 max-w-full mx-auto">
           {children}
+          <Analytics />
         </div>
       </body>
     </html>

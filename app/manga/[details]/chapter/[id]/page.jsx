@@ -40,11 +40,11 @@ const MangaReader = () => {
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
-        router.back(); // Go back when pressing Escape
+        router.back();
       } else if (event.key === "ArrowRight") {
-        handleNextPage(); // Go to the next page when pressing the right arrow
+        handleNextPage();
       } else if (event.key === "ArrowLeft") {
-        handlePreviousPage(); // Go to the previous page when pressing the left arrow
+        handlePreviousPage();
       }
     };
 
