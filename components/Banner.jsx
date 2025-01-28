@@ -11,6 +11,7 @@ import Image from "next/image";
 const Banner = ({ mangaList }) => {
   return (
     <div className="w-full">
+      <h1 className="text-2xl font-bold mb-4">4nglp&apos;s recommendations </h1>
       <Swiper
         modules={[Pagination, Autoplay]}
         slidesPerView={1}
