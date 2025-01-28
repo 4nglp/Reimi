@@ -14,14 +14,12 @@ const MangaReader = () => {
 
     const fetchPages = async () => {
       try {
-        // Call your proxy API instead of directly calling MangaDex API
         const response = await fetch(
           `/api/mangadex-proxy?chapterId=${chapterId}`
         );
         const data = await response.json();
 
         if (data.chapter && data.chapter.data) {
-          // Map the pages data to image URLs
           const pageUrls = data.chapter.data.map(
             (file) => `${data.baseUrl}/data/${data.chapter.hash}/${file}`
           );
