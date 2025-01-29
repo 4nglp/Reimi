@@ -1,5 +1,4 @@
-"use client"; // Make this a client component
-
+"use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -127,7 +126,7 @@ const MangaDetailsPage = ({ params }) => {
     library.push(mangaData);
     localStorage.setItem("library", JSON.stringify(library));
     setIsAdded(true);
-    setShowModal(false); // Close the modal
+    setShowModal(false);
   };
 
   const removeFromLibrary = () => {
@@ -255,7 +254,7 @@ const MangaDetailsPage = ({ params }) => {
                 </button>
               </div>
               <div className="flex">
-                <div className="flex flex-col w-1/2 pr-4">
+                <div className="flex flex-col w-1/4 pr-4">
                   <Image
                     src={coverImageUrl}
                     alt={`Poster for ${mangaTitle}`}
@@ -264,20 +263,34 @@ const MangaDetailsPage = ({ params }) => {
                     className="object-cover rounded"
                   />
                 </div>
-                <div className="flex flex-col justify-between w-1/2">
-                  <label className="text-white font-bold">Category</label>
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="bg-gray-700 text-white py-2 px-4 rounded mb-4"
-                  >
-                    <option value="Reading">Reading</option>
-                    <option value="Completed">Completed</option>
-                    <option value="On Hold">On Hold</option>
-                    <option value="Dropped">Dropped</option>
-                    <option value="Plan to Read">Plan to Read</option>
-                  </select>
-                  <div className="flex justify-between">
+                <div className="flex flex-col justify-between w-3/4">
+                  <div>
+                    <h3 className="text-white text-xl font-bold">
+                      {mangaTitle}
+                    </h3>
+                    <p className="text-gray-300">{mangaAltTitle}</p>
+                    <p className="text-gray-400 mt-2">{mangaDescription}</p>
+                  </div>
+                  <div className="mt-4">
+                    <label className="text-white font-bold">Category</label>
+                    <select
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      className="bg-gray-700 text-white py-2 px-4 rounded mb-4"
+                    >
+                      <option value="Reading">Reading</option>
+                      <option value="Completed">Completed</option>
+                      <option value="On Hold">On Hold</option>
+                      <option value="Dropped">Dropped</option>
+                      <option value="Plan to Read">Plan to Read</option>
+                    </select>
+                  </div>
+                  <div className="mt-2">
+                    <p className="text-white font-semibold">
+                      Current Status: {selectedCategory}
+                    </p>
+                  </div>
+                  <div className="flex justify-between mt-4">
                     <button
                       onClick={addToLibrary}
                       className="bg-blue-600 text-white py-2 px-4 rounded"
@@ -289,6 +302,79 @@ const MangaDetailsPage = ({ params }) => {
                       className="bg-gray-500 text-white py-2 px-4 rounded"
                     >
                       Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {showModal && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70">
+            <div className="bg-gray-800 p-6 rounded shadow-lg w-[600px] relative">
+              {" "}
+              {/* Dark background for modal */}
+              <div className="flex justify-between mb-4">
+                <h2 className="text-lg font-bold text-white">Add to Library</h2>{" "}
+                {/* White text */}
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  &times; {/* Close button */}
+                </button>
+              </div>
+              <div className="flex">
+                {/* Left Side: Mini Poster */}
+                <div className="flex flex-col w-1/2 pr-4">
+                  {coverImageUrl && (
+                    <div className="relative w-full h-60 mb-4">
+                      <Image
+                        src={coverImageUrl}
+                        alt={`Poster for ${mangaTitle}`}
+                        layout="fill"
+                        objectFit="contain"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Right Side: Title, Status, and Category Selection */}
+                <div className="flex flex-col w-1/2">
+                  <h2 className="text-lg font-bold text-white">{mangaTitle}</h2>{" "}
+                  {/* White text */}
+                  <p className="text-gray-300 mb-2">
+                    Reading Status: {selectedCategory}
+                  </p>{" "}
+                  {/* Lighter gray text */}
+                  <h2 className="text-lg font-bold text-white mb-4">
+                    Select Category
+                  </h2>{" "}
+                  {/* White text */}
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="border border-gray-600 bg-gray-700 text-white p-2 mb-4 w-full"
+                  >
+                    <option value="Reading">Reading</option>
+                    <option value="On Hold">On Hold</option>
+                    <option value="Planning">Planning</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Dropped">Dropped</option>
+                  </select>
+                  {/* Buttons at the bottom right inside the modal */}
+                  <div className="flex justify-end space-x-2 mt-auto">
+                    <button
+                      onClick={() => setShowModal(false)}
+                      className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={addToLibrary}
+                      className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Add
                     </button>
                   </div>
                 </div>
