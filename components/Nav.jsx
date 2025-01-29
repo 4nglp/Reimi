@@ -16,18 +16,18 @@ const Nav = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between w-full pl-3 py-3 mb-4">
-      <div className="flex gap-4 items-center">
+    <nav className="flex items-center justify-between w-full py-3 mb-4">
+      <div className="flex gap-4 items-center px-3">
         <Link href="/" className="flex gap-2 items-center">
           <p>Reimi</p>
         </Link>
         <Link href="/library">Library</Link>
         <Link href="/manga">Browse</Link>
       </div>
-      <div className="flex items-center pl-4 w-3/5">
+      <div className="flex items-center w-3/5">
         <form
           onSubmit={handleSearch}
-          className="relative flex items-center w-full pl-4"
+          className="relative flex items-center w-full"
         >
           <input
             type="text"
