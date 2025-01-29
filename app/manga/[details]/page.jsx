@@ -1,145 +1,52 @@
-"use client";
-import { useEffect, useState } from "react";
+import Nav from "@components/Nav";
 import Image from "next/image";
 import Link from "next/link";
-import Head from "next/head";
-import Nav from "@components/Nav";
 
-const fetchMangaDetails = async (currentMangaId) => {
-  try {
-    const apiRes = await fetch(
-      `https://api.mangadex.org/manga/${currentMangaId}`
-    );
-    const res = await apiRes.json();
-    return res.data;
-  } catch (error) {
-    console.log(error);
-    return null;
-  }
-};
+async function fetchMangaDetails(currentMangaId) {
+  const res = await fetch(`https://api.mangadex.org/manga/${currentMangaId}`);
+  const data = await res.json();
+  return data.data;
+}
 
-const fetchAuthorDetails = async (authorId) => {
-  try {
-    const authorRes = await fetch(
-      `https://api.mangadex.org/author/${authorId}`
-    );
-    const authorData = await authorRes.json();
-    return authorData.data.attributes.name;
-  } catch (error) {
-    console.log("Error fetching author:", error);
-    return "Unknown author";
-  }
-};
+async function fetchCoverImageUrl(coverArtId, mangaId) {
+  const res = await fetch(`https://api.mangadex.org/cover/${coverArtId}`);
+  const data = await res.json();
+  const fileName = data.data.attributes.fileName;
+  return `https://uploads.mangadex.org/covers/${mangaId}/${fileName}`;
+}
 
-const fetchChapters = async (mangaId) => {
-  try {
-    const resp = await fetch(
-      `https://api.mangadex.org/manga/${mangaId}/feed?limit=500&translatedLanguage[]=en&order[chapter]=desc&includeEmptyPages=0`
-    );
-    const chaptersData = await resp.json();
-    return chaptersData.data;
-  } catch (error) {
-    console.error("Error fetching chapters:", error);
-    return [];
-  }
-};
+async function fetchAuthorName(authorId) {
+  const res = await fetch(`https://api.mangadex.org/author/${authorId}`);
+  const data = await res.json();
+  return data.data.attributes.name;
+}
 
-const MangaDetailsPage = ({ params }) => {
-  const [mangaDetails, setMangaDetails] = useState(null);
-  const [coverImageUrl, setCoverImageUrl] = useState(null);
-  const [authorNames, setAuthorNames] = useState(null);
-  const [chapters, setChapters] = useState([]);
-  const [isAdded, setIsAdded] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("Reading");
-  const [loading, setLoading] = useState(true);
+async function fetchChapters(mangaId) {
+  const res = await fetch(
+    `https://api.mangadex.org/manga/${mangaId}/feed?limit=500&translatedLanguage[]=en&order[chapter]=desc`
+  );
+  const data = await res.json();
+  return data.data;
+}
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const details = await fetchMangaDetails(params.details);
-        if (details) {
-          setMangaDetails(details);
+export default async function MangaDetailsPage({ params }) {
+  const mangaDetails = await fetchMangaDetails(params.details);
 
-          const coverArtRelationship = details.relationships.find(
-            (r) => r.type === "cover_art"
-          );
-          const coverArtId = coverArtRelationship
-            ? coverArtRelationship.id
-            : null;
+  const coverRel = mangaDetails.relationships.find(
+    (rel) => rel.type === "cover_art"
+  );
+  const coverImageUrl = coverRel
+    ? await fetchCoverImageUrl(coverRel.id, params.details)
+    : null;
 
-          if (coverArtId) {
-            const coverRes = await fetch(
-              `https://api.mangadex.org/cover/${coverArtId}`
-            );
-            const coverData = await coverRes.json();
+  const authorRel = mangaDetails.relationships.find(
+    (rel) => rel.type === "author"
+  );
+  const authorName = authorRel
+    ? await fetchAuthorName(authorRel.id)
+    : "Unknown Author";
 
-            if (coverData.data && coverData.data.attributes.fileName) {
-              const fileName = coverData.data.attributes.fileName;
-              setCoverImageUrl(
-                `https://uploads.mangadex.org/covers/${params.details}/${fileName}`
-              );
-            } else {
-              console.log("No cover image available");
-            }
-          } else {
-            console.log("Cover art relationship not found");
-          }
-
-          const authors = details.relationships.filter(
-            (r) => r.type === "author"
-          );
-          if (authors.length > 0) {
-            const authorName = await fetchAuthorDetails(authors[0].id);
-            setAuthorNames(authorName);
-          }
-
-          const allChapters = await fetchChapters(params.details);
-          setChapters(allChapters);
-
-          const library = JSON.parse(localStorage.getItem("library")) || [];
-          const isMangaInLibrary = library.some(
-            (item) => item.id === details.id
-          );
-          setIsAdded(isMangaInLibrary);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [params.details]);
-
-  const addToLibrary = () => {
-    const mangaData = {
-      id: mangaDetails.id,
-      title: mangaDetails.attributes.title?.en,
-      coverImageUrl,
-      chapterCount: chapters.length,
-      category: selectedCategory,
-    };
-
-    const library = JSON.parse(localStorage.getItem("library")) || [];
-    library.push(mangaData);
-    localStorage.setItem("library", JSON.stringify(library));
-    setIsAdded(true);
-    setShowModal(false);
-  };
-
-  const removeFromLibrary = () => {
-    const library = JSON.parse(localStorage.getItem("library")) || [];
-    const updatedLibrary = library.filter(
-      (item) => item.id !== mangaDetails.id
-    );
-    localStorage.setItem("library", JSON.stringify(updatedLibrary));
-    setIsAdded(false);
-  };
-
-  if (loading) return <div>Loading...</div>;
-  if (!mangaDetails) return <div>Error loading manga details</div>;
+  const chapters = await fetchChapters(params.details);
 
   const mangaTitle = mangaDetails.attributes.title?.en || "No title available";
   const mangaAltTitle =
@@ -149,27 +56,16 @@ const MangaDetailsPage = ({ params }) => {
     mangaDetails.attributes.description?.en || "No description available";
 
   const genres = mangaDetails.attributes.tags || [];
-  const genreNames =
-    genres
-      .map((tag) => tag.attributes?.name?.en)
-      .filter((name) => name !== undefined)
-      .join(", ") || "No genres available";
+  const genreNames = genres
+    .map((tag) => tag.attributes?.name?.en)
+    .filter((name) => name !== undefined)
+    .join(", ");
 
   const year = mangaDetails.attributes.year || "Unknown year";
   const status = mangaDetails.attributes.status || "Unknown status";
 
   return (
-    <div>
-      <Head>
-        <title>{mangaTitle} - Manga Details</title>
-        <meta name="description" content={mangaDescription} />
-        <meta property="og:title" content={mangaTitle} />
-        <meta property="og:description" content={mangaDescription} />
-        <meta property="og:image" content={coverImageUrl} />
-        <meta name="twitter:title" content={mangaTitle} />
-        <meta name="twitter:description" content={mangaDescription} />
-        <meta name="twitter:image" content={coverImageUrl} />
-      </Head>
+    <>
       <Nav />
       <div className="container mx-auto p-4">
         <div className="flex flex-col lg:flex-row gap-6">
@@ -179,46 +75,35 @@ const MangaDetailsPage = ({ params }) => {
                 <Image
                   src={coverImageUrl}
                   alt={`Poster for ${mangaTitle}`}
-                  layout="fill"
-                  objectFit="cover"
-                  priority
+                  fill
+                  style={{ objectFit: "cover" }}
                 />
               </div>
             ) : (
               <h1>No poster available</h1>
             )}
           </div>
+
           <div className="flex flex-col justify-between">
             <div>
               <h1 className="text-4xl font-bold mb-2">{mangaTitle}</h1>
               {mangaAltTitle !== "No alt title available" && (
                 <h2 className="text-xl text-gray-600 mb-4">{mangaAltTitle}</h2>
               )}
+
               <p className="mb-4">{mangaDescription}</p>
               <p className="mb-2">
                 <strong>
-                  {authorNames || "Unknown author"}, {status}, {year}
+                  {authorName}, {status}, {year}
                 </strong>
               </p>
               <p className="mb-2">
-                <strong>Genres:</strong> {genreNames}
+                <strong>Genres:</strong> {genreNames || "No genres available"}
               </p>
-            </div>
-            <div>
-              <button
-                disabled={isAdded}
-                onClick={isAdded ? removeFromLibrary : () => setShowModal(true)}
-                className={`${
-                  isAdded
-                    ? "bg-gray-600 cursor-not-allowed"
-                    : "bg-green-600 hover:bg-green-700"
-                } text-white font-bold py-2 px-4 rounded`}
-              >
-                {isAdded ? "Added" : "Add to Library"}
-              </button>
             </div>
           </div>
         </div>
+
         <div className="mt-6">
           <h2 className="text-2xl font-bold mb-4">Chapters</h2>
           <div>
@@ -227,164 +112,21 @@ const MangaDetailsPage = ({ params }) => {
                 {chapters.map((chapter) => (
                   <li key={chapter.id} className="mb-2">
                     <Link
-                      href={`/chapter/${chapter.id}`}
-                      className="text-white-1000 hover:text-white-2000"
+                      href={`/manga/${params.details}/chapter/${chapter.id}`}
+                      className="text-white-600"
                     >
-                      <strong>Chapter {chapter.attributes.chapter}</strong>{" "}
+                      Chapter {chapter.attributes.chapter}{" "}
                       {chapter.attributes.title || ""}
                     </Link>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p>No chapters available</p>
+              <p>No chapters available for this manga.</p>
             )}
           </div>
         </div>
-        {showModal && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70">
-            <div className="bg-gray-800 p-6 rounded shadow-lg w-[600px] relative">
-              <div className="flex justify-between mb-4">
-                <h2 className="text-lg font-bold text-white">Add to Library</h2>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  &times;
-                </button>
-              </div>
-              <div className="flex">
-                <div className="flex flex-col w-1/4 pr-4">
-                  <Image
-                    src={coverImageUrl}
-                    alt={`Poster for ${mangaTitle}`}
-                    width={100}
-                    height={150}
-                    className="object-cover rounded"
-                  />
-                </div>
-                <div className="flex flex-col justify-between w-3/4">
-                  <div>
-                    <h3 className="text-white text-xl font-bold">
-                      {mangaTitle}
-                    </h3>
-                    <p className="text-gray-300">{mangaAltTitle}</p>
-                    <p className="text-gray-400 mt-2">{mangaDescription}</p>
-                  </div>
-                  <div className="mt-4">
-                    <label className="text-white font-bold">Category</label>
-                    <select
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="bg-gray-700 text-white py-2 px-4 rounded mb-4"
-                    >
-                      <option value="Reading">Reading</option>
-                      <option value="Completed">Completed</option>
-                      <option value="On Hold">On Hold</option>
-                      <option value="Dropped">Dropped</option>
-                      <option value="Plan to Read">Plan to Read</option>
-                    </select>
-                  </div>
-                  <div className="mt-2">
-                    <p className="text-white font-semibold">
-                      Current Status: {selectedCategory}
-                    </p>
-                  </div>
-                  <div className="flex justify-between mt-4">
-                    <button
-                      onClick={addToLibrary}
-                      className="bg-blue-600 text-white py-2 px-4 rounded"
-                    >
-                      Add to Library
-                    </button>
-                    <button
-                      onClick={() => setShowModal(false)}
-                      className="bg-gray-500 text-white py-2 px-4 rounded"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        {showModal && (
-          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-70">
-            <div className="bg-gray-800 p-6 rounded shadow-lg w-[600px] relative">
-              {" "}
-              {/* Dark background for modal */}
-              <div className="flex justify-between mb-4">
-                <h2 className="text-lg font-bold text-white">Add to Library</h2>{" "}
-                {/* White text */}
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  &times; {/* Close button */}
-                </button>
-              </div>
-              <div className="flex">
-                {/* Left Side: Mini Poster */}
-                <div className="flex flex-col w-1/2 pr-4">
-                  {coverImageUrl && (
-                    <div className="relative w-full h-60 mb-4">
-                      <Image
-                        src={coverImageUrl}
-                        alt={`Poster for ${mangaTitle}`}
-                        layout="fill"
-                        objectFit="contain"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                {/* Right Side: Title, Status, and Category Selection */}
-                <div className="flex flex-col w-1/2">
-                  <h2 className="text-lg font-bold text-white">{mangaTitle}</h2>{" "}
-                  {/* White text */}
-                  <p className="text-gray-300 mb-2">
-                    Reading Status: {selectedCategory}
-                  </p>{" "}
-                  {/* Lighter gray text */}
-                  <h2 className="text-lg font-bold text-white mb-4">
-                    Select Category
-                  </h2>{" "}
-                  {/* White text */}
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="border border-gray-600 bg-gray-700 text-white p-2 mb-4 w-full"
-                  >
-                    <option value="Reading">Reading</option>
-                    <option value="On Hold">On Hold</option>
-                    <option value="Planning">Planning</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Dropped">Dropped</option>
-                  </select>
-                  {/* Buttons at the bottom right inside the modal */}
-                  <div className="flex justify-end space-x-2 mt-auto">
-                    <button
-                      onClick={() => setShowModal(false)}
-                      className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={addToLibrary}
-                      className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
-    </div>
+    </>
   );
-};
-
-export default MangaDetailsPage;
+}
