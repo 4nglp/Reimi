@@ -7,7 +7,7 @@ const GetMangaList = async () => {
       const response = await fetch("https://api.mangadex.org/manga?limit=100", {
         headers: {
           "Content-Type": "application/json",
-          "User-Agent": "Reimi@0.1.0 (https://reimi.vercel.app/)",
+          "User-Agent": "Reimi@0.1.0 (https://raimi.netlify.app/)",
         },
         cache: "no-store",
       });
