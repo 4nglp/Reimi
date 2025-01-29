@@ -8,6 +8,32 @@ async function fetchMangaDetails(currentMangaId) {
   return data.data;
 }
 
+async function fetchBannerImageFromAniList(title) {
+  const query = `
+    query ($title: String) {
+      Media (search: $title, type: MANGA) {
+        bannerImage
+      }
+    }
+  `;
+
+  const variables = { title };
+
+  const url = "https://graphql.anilist.co";
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify({ query, variables }),
+  };
+
+  const res = await fetch(url, options);
+  const data = await res.json();
+  return data.data.Media?.bannerImage || null;
+}
+
 async function fetchCoverImageUrl(coverArtId, mangaId) {
   const res = await fetch(`https://api.mangadex.org/cover/${coverArtId}`);
   const data = await res.json();
@@ -31,24 +57,21 @@ async function fetchChapters(mangaId) {
 
 export default async function MangaDetailsPage({ params }) {
   const mangaDetails = await fetchMangaDetails(params.details);
-
+  const mangaTitle = mangaDetails.attributes.title?.en || "No title available";
+  const bannerImageUrl = await fetchBannerImageFromAniList(mangaTitle);
   const coverRel = mangaDetails.relationships.find(
     (rel) => rel.type === "cover_art"
   );
   const coverImageUrl = coverRel
     ? await fetchCoverImageUrl(coverRel.id, params.details)
     : null;
-
   const authorRel = mangaDetails.relationships.find(
     (rel) => rel.type === "author"
   );
   const authorName = authorRel
     ? await fetchAuthorName(authorRel.id)
     : "Unknown Author";
-
   const chapters = await fetchChapters(params.details);
-
-  const mangaTitle = mangaDetails.attributes.title?.en || "No title available";
   const mangaAltTitle =
     mangaDetails.attributes.altTitles?.find((alt) => alt.en)?.en ||
     "No alt title available";
@@ -62,48 +85,53 @@ export default async function MangaDetailsPage({ params }) {
     .join(", ");
 
   const year = mangaDetails.attributes.year || "Unknown year";
-  const status = mangaDetails.attributes.status || "Unknown status";
+  const status = mangaDetails.attributes.status
+    ? mangaDetails.attributes.status.charAt(0).toUpperCase() +
+      mangaDetails.attributes.status.slice(1)
+    : "Unknown status";
 
   return (
     <>
       <Nav />
-      <div className="container mx-auto p-4">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="flex-shrink-0">
-            {coverImageUrl ? (
-              <div className="relative w-[300px] h-[450px]">
-                <Image
-                  src={coverImageUrl}
-                  alt={`Poster for ${mangaTitle}`}
-                  fill
-                  style={{ objectFit: "cover" }}
-                />
-              </div>
-            ) : (
-              <h1>No poster available</h1>
+      <div className="relative w-full h-[380px] bg-cover bg-center">
+        {bannerImageUrl && (
+          <Image
+            src={bannerImageUrl}
+            alt="Banner Image"
+            layout="fill"
+            objectFit="cover"
+            className="rounded-md"
+          />
+        )}
+        <div className="absolute inset-0 flex items-center justify-between p-6 bg-gradient-to-t from-black to-transparent">
+          <div className="w-[150px] h-[225px] sm:w-[200px] sm:h-[300px]">
+            {coverImageUrl && (
+              <Image
+                src={coverImageUrl}
+                alt={`Cover for ${mangaTitle}`}
+                width={150}
+                height={225}
+                objectFit="cover"
+                className="rounded-md sm:w-[200px] sm:h-[300px]"
+              />
             )}
           </div>
-
-          <div className="flex flex-col justify-between">
-            <div>
-              <h1 className="text-4xl font-bold mb-2">{mangaTitle}</h1>
-              {mangaAltTitle !== "No alt title available" && (
-                <h2 className="text-xl text-gray-600 mb-4">{mangaAltTitle}</h2>
-              )}
-
-              <p className="mb-4">{mangaDescription}</p>
-              <p className="mb-2">
-                <strong>
-                  {authorName}, {status}, {year}
-                </strong>
-              </p>
-              <p className="mb-2">
-                <strong>Genres:</strong> {genreNames || "No genres available"}
-              </p>
-            </div>
+          <div className="flex-1 ml-4 text-white">
+            <h1 className="text-3xl sm:text-5xl font-bold">{mangaTitle}</h1>
+            {mangaAltTitle !== "No alt title available" && (
+              <h2 className="text-xl italic text-gray-300">{mangaAltTitle}</h2>
+            )}
+            <p className="text-sm mt-2">{mangaDescription}</p>
+            <h3 className="text-lg font-bold mt-4">
+              {authorName} | {status} | {year}
+            </h3>
+            <p className="text-sm text-gray-300">
+              {genreNames || "No genres available"}
+            </p>
           </div>
         </div>
-
+      </div>
+      <div className="container mx-auto p-4">
         <div className="mt-6">
           <h2 className="text-2xl font-bold mb-4">Chapters</h2>
           <div>
@@ -113,7 +141,7 @@ export default async function MangaDetailsPage({ params }) {
                   <li key={chapter.id} className="mb-2">
                     <Link
                       href={`/manga/${params.details}/chapter/${chapter.id}`}
-                      className="text-white-600"
+                      className="text-white-600 hover:text-blue-600"
                     >
                       Chapter {chapter.attributes.chapter}{" "}
                       {chapter.attributes.title || ""}

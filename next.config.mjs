@@ -12,6 +12,11 @@ const nextConfig = {
         hostname: "uploads.mangadex.org",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "s4.anilist.co",
+        pathname: "/file/anilistcdn/media/manga/banner/**",
+      },
     ],
   },
 };
