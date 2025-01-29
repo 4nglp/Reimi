@@ -165,11 +165,15 @@ export default async function MangaDetailsPage({ params, searchParams }) {
                       <span className="w-[120px] sm:w-[140px] text-left">
                         Chapter {chapter.attributes.chapter}
                       </span>
-                      {chapter.attributes.title && (
-                        <span className="flex-1 truncate min-w-0 text-gray-300 group-hover:text-white text-left">
-                          {chapter.attributes.title}
-                        </span>
-                      )}
+                      <span
+                        className={`flex-1 min-w-0 text-gray-300 group-hover:text-white text-left ${
+                          chapter.attributes.title
+                            ? "max-w-[300px] truncate"
+                            : "max-w-[300px]"
+                        }`}
+                      >
+                        {chapter.attributes.title || ""}
+                      </span>
                     </Link>
                   </li>
                 ))}
