@@ -24,7 +24,7 @@ const Nav = () => {
         <Link href="/library">Library</Link>
         <Link href="/manga">Browse</Link>
       </div>
-      <div className="flex items-center w-3/5">
+      <div className="flex items-center pl-4 w-3/5">
         <form
           onSubmit={handleSearch}
           className="relative flex items-center w-full pl-4"
