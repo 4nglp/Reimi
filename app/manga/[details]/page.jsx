@@ -51,6 +51,7 @@ async function fetchChapters(mangaId, reverse = false) {
   );
   const data = await res.json();
   let chapters = data.data;
+
   if (reverse) {
     chapters = chapters.reverse();
   }
@@ -154,10 +155,21 @@ export default async function MangaDetailsPage({ params, searchParams }) {
                   <li key={chapter.id} className="mb-2">
                     <Link
                       href={`/manga/${params.details}/chapter/${chapter.id}`}
-                      className="text-white-600 hover:text-blue-600"
+                      className="flex items-center justify-between p-2 rounded-md group hover:bg-gray-800 transition w-full"
                     >
-                      Chapter {chapter.attributes.chapter}{" "}
-                      {chapter.attributes.title || ""}
+                      {chapter.attributes.volume && (
+                        <span className="font-bold w-[80px] sm:w-[100px] text-left">
+                          Vol {chapter.attributes.volume}
+                        </span>
+                      )}
+                      <span className="w-[120px] sm:w-[140px] text-left">
+                        Chapter {chapter.attributes.chapter}
+                      </span>
+                      {chapter.attributes.title && (
+                        <span className="flex-1 truncate min-w-0 text-gray-300 group-hover:text-white text-left">
+                          {chapter.attributes.title}
+                        </span>
+                      )}
                     </Link>
                   </li>
                 ))}
