@@ -1,6 +1,7 @@
 import Nav from "@components/Nav";
 import Image from "next/image";
 import Link from "next/link";
+import { LuArrowDownUp } from "react-icons/lu";
 
 async function fetchMangaDetails(currentMangaId) {
   const res = await fetch(`https://api.mangadex.org/manga/${currentMangaId}`);
@@ -16,9 +17,7 @@ async function fetchBannerImageFromAniList(title) {
       }
     }
   `;
-
   const variables = { title };
-
   const url = "https://graphql.anilist.co";
   const options = {
     method: "POST",
@@ -28,7 +27,6 @@ async function fetchBannerImageFromAniList(title) {
     },
     body: JSON.stringify({ query, variables }),
   };
-
   const res = await fetch(url, options);
   const data = await res.json();
   return data.data.Media?.bannerImage || null;
@@ -47,15 +45,19 @@ async function fetchAuthorName(authorId) {
   return data.data.attributes.name;
 }
 
-async function fetchChapters(mangaId) {
+async function fetchChapters(mangaId, reverse = false) {
   const res = await fetch(
     `https://api.mangadex.org/manga/${mangaId}/feed?limit=500&translatedLanguage[]=en&order[chapter]=desc`
   );
   const data = await res.json();
-  return data.data;
+  let chapters = data.data;
+  if (reverse) {
+    chapters = chapters.reverse();
+  }
+  return chapters;
 }
 
-export default async function MangaDetailsPage({ params }) {
+export default async function MangaDetailsPage({ params, searchParams }) {
   const mangaDetails = await fetchMangaDetails(params.details);
   const mangaTitle = mangaDetails.attributes.title?.en || "No title available";
   const bannerImageUrl = await fetchBannerImageFromAniList(mangaTitle);
@@ -71,19 +73,18 @@ export default async function MangaDetailsPage({ params }) {
   const authorName = authorRel
     ? await fetchAuthorName(authorRel.id)
     : "Unknown Author";
-  const chapters = await fetchChapters(params.details);
+  const reverseOrder = searchParams.reverse === "true";
+  const chapters = await fetchChapters(params.details, reverseOrder);
   const mangaAltTitle =
     mangaDetails.attributes.altTitles?.find((alt) => alt.en)?.en ||
     "No alt title available";
   const mangaDescription =
     mangaDetails.attributes.description?.en || "No description available";
-
   const genres = mangaDetails.attributes.tags || [];
   const genreNames = genres
     .map((tag) => tag.attributes?.name?.en)
     .filter((name) => name !== undefined)
     .join(", ");
-
   const year = mangaDetails.attributes.year || "Unknown year";
   const status = mangaDetails.attributes.status
     ? mangaDetails.attributes.status.charAt(0).toUpperCase() +
@@ -93,7 +94,7 @@ export default async function MangaDetailsPage({ params }) {
   return (
     <>
       <Nav />
-      <div className="relative w-full h-[380px] bg-cover bg-center">
+      <div className="relative w-full h-[400px] bg-cover bg-center">
         {bannerImageUrl && (
           <Image
             src={bannerImageUrl}
@@ -133,7 +134,19 @@ export default async function MangaDetailsPage({ params }) {
       </div>
       <div className="container mx-auto p-4">
         <div className="mt-6">
-          <h2 className="text-2xl font-bold mb-4">Chapters</h2>
+          <h2 className="text-2xl font-bold mb-4 flex items-center">
+            Chapters{" "}
+            <Link
+              href={{
+                pathname: `/manga/${params.details}`,
+                query: {
+                  reverse: reverseOrder ? "false" : "true",
+                },
+              }}
+            >
+              <LuArrowDownUp className="ml-2 text-xl" />
+            </Link>
+          </h2>
           <div>
             {chapters.length > 0 ? (
               <ul>
