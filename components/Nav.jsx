@@ -25,7 +25,10 @@ const Nav = () => {
         <Link href="/manga">Browse</Link>
       </div>
       <div className="flex items-center w-3/5">
-        <form onSubmit={handleSearch} className="relative flex items-center w-full">
+        <form
+          onSubmit={handleSearch}
+          className="relative flex items-center w-full pl-4"
+        >
           <input
             type="text"
             placeholder="Search "
