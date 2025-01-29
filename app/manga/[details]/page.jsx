@@ -9,11 +9,12 @@ async function fetchMangaDetails(currentMangaId) {
   return data.data;
 }
 
-async function fetchBannerImageFromAniList(title) {
+async function fetchAniListData(title) {
   const query = `
     query ($title: String) {
       Media (search: $title, type: MANGA) {
         bannerImage
+        chapters
       }
     }
   `;
@@ -29,7 +30,10 @@ async function fetchBannerImageFromAniList(title) {
   };
   const res = await fetch(url, options);
   const data = await res.json();
-  return data.data.Media?.bannerImage || null;
+  return {
+    bannerImage: data.data.Media?.bannerImage || null,
+    totalChapters: data.data.Media?.chapters || "Unknown",
+  };
 }
 
 async function fetchCoverImageUrl(coverArtId, mangaId) {
@@ -51,7 +55,14 @@ async function fetchChapters(mangaId, reverse = false) {
   );
   const data = await res.json();
   let chapters = data.data;
-
+  const uniqueChapters = new Map();
+  chapters.forEach((chapter) => {
+    const chapterKey = `${chapter.attributes.chapter}`;
+    if (!uniqueChapters.has(chapterKey)) {
+      uniqueChapters.set(chapterKey, chapter);
+    }
+  });
+  chapters = Array.from(uniqueChapters.values());
   if (reverse) {
     chapters = chapters.reverse();
   }
@@ -61,7 +72,11 @@ async function fetchChapters(mangaId, reverse = false) {
 export default async function MangaDetailsPage({ params, searchParams }) {
   const mangaDetails = await fetchMangaDetails(params.details);
   const mangaTitle = mangaDetails.attributes.title?.en || "No title available";
-  const bannerImageUrl = await fetchBannerImageFromAniList(mangaTitle);
+  const reverseOrder = searchParams.reverse === "true";
+  const chapters = await fetchChapters(params.details, reverseOrder);
+  const { totalChapters, bannerImage } = await fetchAniListData(mangaTitle);
+  const chapterCount =
+    totalChapters !== "Unknown" ? totalChapters : chapters.length;
   const coverRel = mangaDetails.relationships.find(
     (rel) => rel.type === "cover_art"
   );
@@ -74,8 +89,6 @@ export default async function MangaDetailsPage({ params, searchParams }) {
   const authorName = authorRel
     ? await fetchAuthorName(authorRel.id)
     : "Unknown Author";
-  const reverseOrder = searchParams.reverse === "true";
-  const chapters = await fetchChapters(params.details, reverseOrder);
   const mangaAltTitle =
     mangaDetails.attributes.altTitles?.find((alt) => alt.en)?.en ||
     "No alt title available";
@@ -96,9 +109,9 @@ export default async function MangaDetailsPage({ params, searchParams }) {
     <>
       <Nav />
       <div className="relative w-full h-[400px] bg-cover bg-center">
-        {bannerImageUrl && (
+        {bannerImage && (
           <Image
-            src={bannerImageUrl}
+            src={bannerImage}
             alt="Banner Image"
             layout="fill"
             objectFit="cover"
@@ -130,6 +143,9 @@ export default async function MangaDetailsPage({ params, searchParams }) {
             <p className="text-sm text-gray-300">
               {genreNames || "No genres available"}
             </p>
+            <h3 className="text-lg text-white-200 font-bold mt-1">
+              Total chapters: {chapterCount}
+            </h3>
           </div>
         </div>
       </div>
