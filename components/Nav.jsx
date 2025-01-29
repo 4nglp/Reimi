@@ -16,7 +16,7 @@ const Nav = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between w-full px-4 py-3 mb-4">
+    <nav className="flex items-center justify-between w-full pl-3 py-3 mb-4">
       <div className="flex gap-4 items-center">
         <Link href="/" className="flex gap-2 items-center">
           <p>Reimi</p>
@@ -24,14 +24,14 @@ const Nav = () => {
         <Link href="/library">Library</Link>
         <Link href="/manga">Browse</Link>
       </div>
-      <div className="flex items-center">
-        <form onSubmit={handleSearch} className="relative flex items-center">
+      <div className="flex items-center w-3/5">
+        <form onSubmit={handleSearch} className="relative flex items-center w-full">
           <input
             type="text"
             placeholder="Search "
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-96 h-12 bg-gray-800 text-white dark:bg-gray-900 dark:text-white pl-4 pr-12 rounded-md focus:outline-none focus:ring-2 focus:ring-white-600"
+            className="w-full h-12 bg-gray-800 text-white dark:bg-gray-900 dark:text-white pl-4 pr-12 rounded-md focus:outline-none focus:ring-2 focus:ring-white-600"
           />
           <FaSearch className="absolute right-3 text-gray-500" />
         </form>
