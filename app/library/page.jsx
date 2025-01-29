@@ -52,14 +52,12 @@ const LibraryPage = () => {
     };
   }, [menuVisible]);
 
-  // Update selected category when params change
   useEffect(() => {
     const storedCategory =
       localStorage.getItem("selectedCategory") || "Reading";
     setSelectedCategory(storedCategory);
   }, []);
 
-  // Filter library based on selected category
   const filteredLibrary = library.filter(
     (manga) => manga.category === selectedCategory
   );
@@ -117,8 +115,6 @@ const LibraryPage = () => {
             ))}
           </div>
         )}
-
-        {/* Context Menu */}
         {menuVisible && (
           <div
             className="fixed bg-gray-800 text-white border border-gray-600 p-2 rounded shadow-lg"
