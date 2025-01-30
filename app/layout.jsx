@@ -1,4 +1,3 @@
-import { Analytics } from "@vercel/analytics/react";
 import "@styles/globals.css";
 
 export const metadata = {
@@ -12,7 +11,6 @@ const RootLayout = ({ children }) => {
       <body>
         <div className=" flex flex-col justify-start items-center sm:justify-center sm:px-4 px-6 max-w-full mx-auto">
           {children}
-          <Analytics />
         </div>
       </body>
     </html>
