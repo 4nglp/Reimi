@@ -31,7 +31,6 @@
 		height: unset;
 	}
 }
-
 #manga-cover img{
 	object-fit: cover; 
 	border-radius: 0.375rem; 
@@ -45,9 +44,33 @@
 	margin-left: 1rem; 
 	color: #ffffff; 
 	@media (max-width: 640px) { 
-	margin-left: unset; 
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+		margin-left: unset; 
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}
+
+#manga-description p{
+
+	overflow-y: auto; 
+	margin-top: 0.5rem; 
+	font-size: 0.875rem;
+	line-height: 1.25rem; 
+	max-height: 150px;
+
+	@media (max-width: 640px) { 
+		position: absolute;
+        left: 16em;
+        right: 5%;
+		text-overflow: unset;
+		white-space: wrap;
+		max-height: 21em;
+	}
+
+	@media (max-width: 440px) { 
+		display: none;
+		overflow: hidden;
+		white-space: nowrap;
 	}
 }

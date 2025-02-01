@@ -44,7 +44,7 @@ const Banner = ({ mangaList }) => {
                     <h3 className="hidden sm:block text-sm mt-2">
                       {manga.genres || "No genres available"}
                     </h3>
-                    <div className="hidden sm:block text-sm mt-2 max-h-[150px] overflow-y-auto">
+                    <div className="paragraph">
                       <p>{manga.description || "No description available"}</p>
                     </div>
                     <h2 className="text-lg sm:text-2xl italic font-bold mt-0 sm:mt-4">
