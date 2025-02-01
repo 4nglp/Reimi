@@ -6,7 +6,7 @@ export default async function Home() {
 	const mangaListFetch = await fs.readFile(process.cwd() + '/app/mangaList.json', 'utf8');
 	const mangaList = JSON.parse(mangaListFetch);
 
-	console.log("fetched: " +mangaListFetch);
+	// console.log("fetched: " +mangaListFetch);
 	return (
 		<div className="w-full flex-center flex-col">
 			<Nav />

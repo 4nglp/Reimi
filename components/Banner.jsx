@@ -8,6 +8,8 @@ import { Pagination, Autoplay } from "swiper/modules";
 import Link from "next/link";
 import Image from "next/image";
 
+import "./css/home.css";
+
 const Banner = ({ mangaList }) => {
   return (
     <div className="w-full">
@@ -24,27 +26,18 @@ const Banner = ({ mangaList }) => {
         {mangaList.map((manga) => (
           <SwiperSlide key={manga.id}>
             <Link href={`/manga/${manga.id}`}>
-              <div className="relative w-full h-full">
+              <div id="manga-banner">
                 <Image
                   src={manga.coverUrl}
                   alt={manga.title}
-                  layout="fill"
-                  objectFit="cover"
-                  objectPosition="top"
-                  className="opacity-80"
+                  width={150}
+                  height={225}
+			      priority = {true}
+					name="manga-banner-bg"
+                  className="opacity-80 object-cover object-top w-full h-full"
                 />
-                <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-between p-4 bg-gradient-to-r from-black to-transparent">
-                  <div className="flex-shrink-0 w-[150px] h-[225px] sm:w-[200px] sm:h-[300px]">
-                    <Image
-                      src={manga.coverUrl}
-                      alt={manga.title}
-                      width={150}
-                      height={225}
-                      objectFit="cover"
-                      className="rounded-md sm:w-[200px] sm:h-[300px]"
-                    />
-                  </div>
-                  <div className="flex-1 ml-4 text-white">
+                <div className="manga-banner-container">
+                  <div id="manga-description">
                     <h1 className="text-3xl sm:text-5xl font-bold">
                       {manga.title}
                     </h1>
@@ -54,10 +47,19 @@ const Banner = ({ mangaList }) => {
                     <div className="hidden sm:block text-sm mt-2 max-h-[150px] overflow-y-auto">
                       <p>{manga.description || "No description available"}</p>
                     </div>
-                    <h2 className="text-lg sm:text-2xl italic font-bold mt-4">
+                    <h2 className="text-lg sm:text-2xl italic font-bold mt-0 sm:mt-4">
                       {manga.author || "No additional details available"}
                     </h2>
                   </div>
+                    <Image
+					  id="manga-cover"
+                      src={manga.coverUrl}
+                      alt={manga.title}
+                      width={150}
+                      height={225}
+					  quality={75}
+					  priority = {true}
+                    />
                 </div>
               </div>
             </Link>
@@ -67,5 +69,6 @@ const Banner = ({ mangaList }) => {
     </div>
   );
 };
+
 
 export default Banner;
